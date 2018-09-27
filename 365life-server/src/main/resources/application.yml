@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: sailor-server
+    name: 365life-server
   profiles:
     active: local
     include:

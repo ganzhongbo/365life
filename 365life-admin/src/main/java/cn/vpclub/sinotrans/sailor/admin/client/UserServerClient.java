@@ -6,6 +6,6 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 /**
  * Created by chentao on 2018/7/25.
  */
-@FeignClient("${feign-client.userinfo-server}")
+@FeignClient("${feign-client.life-server}")
 public interface UserServerClient extends UserClient {
 }

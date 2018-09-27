@@ -8,10 +8,8 @@ import cn.vpclub.sinotrans.sailor.admin.service.UserService;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -26,13 +24,13 @@ public class UserController {
 
     /**
      *  根据id查询数据
-     * @param userId
+     * @param userInfo
      * @return
      */
     @PostMapping(value = "/getUserById")
-    public BaseResponse getUserById(@RequestParam("userId") Long userId){
+    public BaseResponse getUserById(@RequestBody User userInfo){
         BaseResponse baseResponse =null;
-        User user = userService.selectByUserId(userId);
+        User user = userService.selectByUserId(userInfo);
         baseResponse= BackResponseUtil.getBaseResponse(ReturnCodeEnum.CODE_1000.getCode());
         baseResponse.setDataInfo(user);
         return baseResponse;

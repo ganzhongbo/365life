@@ -7,7 +7,7 @@ spring:
     include:
     - redis
   application:
-    name: sailor-admin
+    name: 365life-admin
   http:
     encoding:
       force: false
@@ -25,6 +25,6 @@ spring:
 
 #Feign服务
 feign-client:
-  userinfo-server: sailor-server
+  life-server: 365life-server
 
 

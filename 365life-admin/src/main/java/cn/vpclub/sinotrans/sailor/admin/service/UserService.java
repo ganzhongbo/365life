@@ -15,7 +15,7 @@ public class UserService {
     @Autowired
     private UserServerClient userServerClient;
 
-    public User selectByUserId(Long userId) {
-        return userServerClient.selectByUserId(userId);
+    public User selectByUserId(User user) {
+        return userServerClient.selectByUserId(user);
     }
 }

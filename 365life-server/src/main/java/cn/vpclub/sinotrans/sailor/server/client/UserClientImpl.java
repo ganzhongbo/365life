@@ -6,6 +6,7 @@ import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
 import cn.vpclub.sinotrans.sailor.feign.feignClient.UserClient;
 import cn.vpclub.sinotrans.sailor.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +21,8 @@ public class UserClientImpl implements UserClient {
 
 
     @Override
-    public User selectByUserId(@RequestParam("userId") Long userId) {
-        User userResponse = userService.selectById(userId);
+    public User selectByUserId(@RequestBody User user) {
+        User userResponse = userService.selectById(user.getUserId());
         return userResponse;
     }
 
