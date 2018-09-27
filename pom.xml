@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cn.vpclub.sinotrans</groupId>
-	<artifactId>sailor</artifactId>
+	<artifactId>365life</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>sailor</name>
+	<name>365life</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -29,10 +29,10 @@
 	</properties>
 
 	<modules>
-		<module>sailor-server</module>
-		<module>sailor-feign</module>
-		<module>sailor-api</module>
-		<module>sailor-admin</module>
+		<module>365life-server</module>
+		<module>365life-feign</module>
+		<!--<module>365life-api</module>-->
+		<module>365life-admin</module>
 	</modules>
 
 	<dependencies>

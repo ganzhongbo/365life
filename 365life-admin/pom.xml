@@ -3,18 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>sailor</artifactId>
+        <artifactId>365life</artifactId>
         <groupId>cn.vpclub.sinotrans</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sailor-admin</artifactId>
+    <artifactId>365life-admin</artifactId>
     <dependencies>
 
         <dependency>
             <groupId>cn.vpclub.sinotrans</groupId>
-            <artifactId>sailor-feign</artifactId>
+            <artifactId>365life-feign</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -118,7 +118,7 @@
     </dependencies>
 
     <build>
-        <finalName>sailor-admin</finalName>
+        <finalName>365life-admin</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

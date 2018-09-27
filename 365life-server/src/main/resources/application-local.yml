@@ -45,9 +45,9 @@ spring:
   #数据库源设置
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://10.0.0.43:3306/userinfo_csc?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://192.168.11.77:3306/365life?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
-    password: 123456
+    password: root123
     druid:
       #初始化连接数量，最大最小连接数
       initialSize: 5
