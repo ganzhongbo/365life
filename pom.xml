@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>cn.vpclub.sinotrans</groupId>
+	<artifactId>sailor</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>sailor</name>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.9.RELEASE</version>
+		<relativePath/>
+	</parent>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<springboot.version>1.5.9.RELEASE</springboot.version>
+		<spring-cloud.version>1.4.0.RELEASE</spring-cloud.version>
+		<lombok.version>1.16.10</lombok.version>
+		<poi.version>3.17</poi.version>
+		<common.io.version>2.6</common.io.version>
+		<common.lang3.version>3.6</common.lang3.version>
+		<fastjson.version>1.2.39</fastjson.version>
+	</properties>
+
+	<modules>
+		<module>sailor-server</module>
+		<module>sailor-feign</module>
+		<module>sailor-api</module>
+		<module>sailor-admin</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>cn.vpclub.wuhan</groupId>
+			<artifactId>common-model</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+</project>
