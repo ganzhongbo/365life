@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.vpclub.sinotrans.sailor.server.dao.LifeDicDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.vpclub.sinotrans.sailor.feign.domain.entity.LifeDicEntity">
+        <id column="id" property="id"/>
+        <result column="dic_name" property="dicName"/>
+        <result column="dic_value" property="dicValue"/>
+        <result column="dic_code" property="dicCode"/>
+        <result column="dic_type" property="dicType"/>
+        <result column="dic_status" property="dicStatus"/>
+        <result column="remarks" property="remarks"/>
+
+        <result column="created_by" property="createdBy"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="updated_time" property="updatedTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, dic_name , dic_value, dic_code ,dic_type ,dic_status, remarks,
+        created_by , created_time , updated_by , updated_time , deleted
+    </sql>
+
+    <select id="selectAllDic" resultMap="BaseResultMap">
+          select
+            <include refid="Base_Column_List"/>
+          from life_dic ld where  ld.deleted = 1
+        <if test="paramsMap.dicName !=null and paramsMap.dicName !='' ">
+            and ld.dic_name like "%"#{paramsMap.dicName}"%"
+        </if>
+        <if test="paramsMap.dicType !=null and paramsMap.dicType !=''">
+            and  ld.dic_type = #{paramsMap.dicType}
+        </if>
+        <if test="paramsMap.dicCode !=null and paramsMap.dicCode !=''">
+            and  ld.dic_code = #{paramsMap.dicCode}
+        </if>
+        <if test="paramsMap.dicStatus !=null and paramsMap.dicStatus !=''">
+            and  ld.dic_status = #{paramsMap.dicStatus}
+        </if>
+    </select>
+
+</mapper>
