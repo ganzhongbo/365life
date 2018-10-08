@@ -3,4 +3,43 @@
 
 <mapper namespace="cn.vpclub.sinotrans.sailor.server.dao.UserDao">
 
+    <!-- 通用查询映射结果 -->
+   <!-- <resultMap id="BaseResultMap" type="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
+        <id column="user_id" property="userId"/>
+        <result column="user_role" property="userRole"/>
+        <result column="user_name" property="userName"/>
+        <result column="real_name" property="realName"/>
+        <result column="user_code" property="useCode"/>
+        <result column="head_img" property="headImg"/>
+        <result column="sex" property="sex"/>
+
+        <id column="native_place" property="nativePlace"/>
+        <result column="is_marry" property="isMarry"/>
+        <result column="address" property="address"/>
+        <result column="tellphone" property="tellphone"/>
+
+        <result column="created_by" property="createdBy"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="updated_time" property="updatedTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>-->
+
+    <select id="selectByUser" resultType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
+        select * from user_info ui where  ui.deleted = 1 and ui.user_name=#{userName} AND ui.password=#{password}
+    </select>
+
+    <!--批量删除用户关联的资源-->
+    <update id="batchDelete" parameterType="cn.vpclub.sinotrans.user.feign.domain.entity.User">
+        UPDATE user_resouse set deleted = 2 where user_id = #{userId} and deleted = 1;
+    </update>
+
+    <!--根据电话号码查询用户-->
+    <select id="selectByTell" resultType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
+        select * from user_info ui where  ui.deleted = 1 and ui.tellphone=#{tellphone}
+    </select>
+
+
+
+
 </mapper>

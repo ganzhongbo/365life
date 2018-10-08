@@ -13,7 +13,7 @@ public interface LifeDicServise extends IService<LifeDicEntity> {
      * @param lifeDicEntity
      * @return
      */
-    BaseResponse save(LifeDicEntity lifeDicEntity);
+    BaseResponse saveDic(LifeDicEntity lifeDicEntity);
 
 
     /***
@@ -21,7 +21,7 @@ public interface LifeDicServise extends IService<LifeDicEntity> {
      * @param lifeDicEntity
      * @return
      */
-    BaseResponse update(LifeDicEntity lifeDicEntity);
+    BaseResponse updateDic(LifeDicEntity lifeDicEntity);
 
 
     /***
@@ -29,7 +29,7 @@ public interface LifeDicServise extends IService<LifeDicEntity> {
      * @param lifeDicEntity
      * @return
      */
-    BaseResponse delete(LifeDicEntity lifeDicEntity);
+    BaseResponse deleteDic(LifeDicEntity lifeDicEntity);
 
 
     /**
@@ -42,7 +42,7 @@ public interface LifeDicServise extends IService<LifeDicEntity> {
 
     /***
      * 数据字典数据分页查询
-     * @param lifeDicEntity
+     * @param
      * @return
      */
     PageResponse<LifeDicEntity> dicdatapage(LifeDicRequest request);

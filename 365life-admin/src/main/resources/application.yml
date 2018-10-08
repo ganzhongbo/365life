@@ -28,3 +28,12 @@ feign-client:
   life-server: 365life-server
 
 
+sinotrans:
+  smsservice:
+    #短信模板
+    lifeTemplateCode: "SMS_142065350"
+
+life:
+  smsservice:
+    #短信模板
+    lifeMessege: "SMS_142065350"

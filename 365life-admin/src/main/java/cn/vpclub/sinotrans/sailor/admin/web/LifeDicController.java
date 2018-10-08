@@ -32,10 +32,10 @@ public class LifeDicController {
      * @param lifeDicEntity
      * @return
      */
-    @PostMapping(value = "/save")
-    BaseResponse save(@RequestBody LifeDicEntity lifeDicEntity){
+    @PostMapping(value = "/saveDic")
+    BaseResponse saveDic(@RequestBody LifeDicEntity lifeDicEntity){
 
-     return lifeDicService.save(lifeDicEntity);
+     return lifeDicService.saveDic(lifeDicEntity);
     }
 
 
@@ -44,10 +44,10 @@ public class LifeDicController {
      * @param lifeDicEntity
      * @return
      */
-    @PostMapping(value = "/update")
-    BaseResponse update(@RequestBody LifeDicEntity lifeDicEntity){
+    @PostMapping(value = "/updateDic")
+    BaseResponse updateDic(@RequestBody LifeDicEntity lifeDicEntity){
 
-        return lifeDicService.update(lifeDicEntity);
+        return lifeDicService.updateDic(lifeDicEntity);
     }
 
 
@@ -56,10 +56,10 @@ public class LifeDicController {
      * @param lifeDicEntity
      * @return
      */
-    @PostMapping(value = "/delete")
-    BaseResponse delete(@RequestBody LifeDicEntity lifeDicEntity){
+    @PostMapping(value = "/deleteDic")
+    BaseResponse deleteDic(@RequestBody LifeDicEntity lifeDicEntity){
 
-        return lifeDicService.delete(lifeDicEntity);
+        return lifeDicService.deleteDic(lifeDicEntity);
     }
 
 

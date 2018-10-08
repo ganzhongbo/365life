@@ -26,8 +26,8 @@ public class LifeDicService {
      * @param lifeDicEntity
      * @return
      */
-   public BaseResponse save(LifeDicEntity lifeDicEntity){
-      return   lifeDicServerClient.save(lifeDicEntity);
+   public BaseResponse saveDic(LifeDicEntity lifeDicEntity){
+      return   lifeDicServerClient.saveDic(lifeDicEntity);
     }
 
 
@@ -36,8 +36,8 @@ public class LifeDicService {
      * @param lifeDicEntity
      * @return
      */
-    public BaseResponse update(LifeDicEntity lifeDicEntity){
-        return lifeDicServerClient.update(lifeDicEntity);
+    public BaseResponse updateDic(LifeDicEntity lifeDicEntity){
+        return lifeDicServerClient.updateDic(lifeDicEntity);
     }
 
 
@@ -46,8 +46,8 @@ public class LifeDicService {
      * @param lifeDicEntity
      * @return
      */
-    public BaseResponse delete(LifeDicEntity lifeDicEntity){
-        return lifeDicServerClient.delete(lifeDicEntity);
+    public BaseResponse deleteDic(LifeDicEntity lifeDicEntity){
+        return lifeDicServerClient.deleteDic(lifeDicEntity);
     }
 
 

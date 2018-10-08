@@ -31,7 +31,7 @@ public class LifeDicServiceImpl extends ServiceImpl<LifeDicDao, LifeDicEntity> i
     private  LifeDicDao lifeDicDao;
 
     @Override
-    public BaseResponse save(LifeDicEntity lifeDicEntity) {
+    public BaseResponse saveDic(LifeDicEntity lifeDicEntity) {
         log.info("字典保存接口请求数据 {} :",lifeDicEntity.toString());
         BaseResponse baseResponse = new BaseResponse();
 
@@ -54,7 +54,7 @@ public class LifeDicServiceImpl extends ServiceImpl<LifeDicDao, LifeDicEntity> i
     }
 
     @Override
-    public BaseResponse update(LifeDicEntity lifeDicEntity) {
+    public BaseResponse updateDic(LifeDicEntity lifeDicEntity) {
         log.info("字典修改接口请求数据 {} :",lifeDicEntity.toString());
         BaseResponse baseResponse = new BaseResponse();
 
@@ -76,7 +76,7 @@ public class LifeDicServiceImpl extends ServiceImpl<LifeDicDao, LifeDicEntity> i
     }
 
     @Override
-    public BaseResponse delete(LifeDicEntity lifeDicEntity) {
+    public BaseResponse deleteDic(LifeDicEntity lifeDicEntity) {
 
         log.info("字典删除接口请求数据 {} :",lifeDicEntity.toString());
         BaseResponse baseResponse = new BaseResponse();

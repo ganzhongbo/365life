@@ -15,11 +15,8 @@ import java.util.List;
  */
 @Data
 @TableName("user_info")
-public class User extends Model<User> {
+public class User implements Serializable {
 
-    /**
-     * update by zhanchenggui on 2018/7/9.
-     */
 
     /**
      * 会员id
@@ -27,10 +24,30 @@ public class User extends Model<User> {
     @TableId(value = "user_id",type = IdType.ID_WORKER)
     private Long userId;
     /**
+     * 用户角色
+     */
+    private Integer userRole;
+    /**
      * 用户名
      */
     @TableField("user_name")
     private String userName;
+
+    private String userIdcard;
+
+    private String password;
+
+    @TableField(exist = false)
+    private String rePassword;//确认密码
+    /**
+     * 姓名
+     */
+    private String realName;
+    /**
+     * 员工编号
+     * user_code
+     */
+    private String userCode;
     /**
      * 头像
      */
@@ -40,117 +57,125 @@ public class User extends Model<User> {
      */
     private Integer sex;
     /**
-     * 会员等级
+     * 籍贯
      */
-    private Integer grade;
-    /**
-     * 出生日期
-     */
-    private String birthday;
-    /**
-     * 证件类型
-     */
-    @TableField("id_type")
-    private Integer idType;
-    /**
-     * 证件号
-     */
-    @TableField("id_number")
-    private String idNumber;
-    /**
-     * 密码
-     */
-    private String password;
+    private String nativePlace;
 
+    /**
+     * 婚姻状况
+     */
+    private Integer isMarry;
+
+    /**
+     * 居住地址
+     */
+    private String address;
+
+    /**
+     * 手机号
+     */
+    private String tellphone;
     /**
      * 民族
      */
     private String nation;
+
     /**
-     * 国籍
+     * 家庭座机
      */
-    private String nationality;
+    private String homeTellphone;
+
     /**
-     * 出生省份
+     * 出生日期
      */
-    private String nativeProvince;
+    private String birthday;
+
     /**
-     * 出生市
+     * 微信账号
      */
-    private String nativeCity;
+    private  String wxAccount;
     /**
-     * 出生区
+     * QQ账号
      */
-    private String nativeArea;
+    private String qqAccount;
+
     /**
-     * 出生详细地址
+     * 邮箱
      */
-    private String nativeDetailsAddr;
+    private String email;
     /**
-     * 家庭住址省份
+     * 最高学历
      */
-    private String familyProvince;
+    private String hightEducation;
     /**
-     * 家庭住址市
+     * 工作年限
      */
-    private String familyCity;
+    private String workAge;
     /**
-     * 家庭住址区
+     * 有无房产经验
      */
-    private String familyArea;
+    private Integer isExperience;
+
+    private String emergencyContacOne;//第一紧急联系人
+    private String contacOneTell;//联系电话
+
+    private String emergencyContacTwo;//第二紧急联系人
+    private String contacTwoTell;//联系电话
+
     /**
-     * 家庭详细住址
+     * 部门主键
      */
-    private String familyDetailsAddr;
+    private String departmentId;
     /**
-     * 在册单位
+     * 岗位级别
      */
-    private String workUnit;
+    private Integer postLevel;
     /**
-     * 毕业院校
+     *服务商圈
      */
-    private String school;
+    private  String serviceBusiness;
+
     /**
-     * 所学专业
+     * 经纪人资格编号
      */
-    private String major;
+    private String brokerNumber;
+
     /**
-     * 手机号
+     * 开户行
      */
-    private String mobile;
+    private String openBank;
+
     /**
-     * 微信号
+     * 银行账号
      */
-    @TableField("wechat_no")
-    private String wechatNo;
+    private String bankAccount;
+
     /**
-     * QQ号
+     * 个人简介
      */
-    @TableField("qq_no")
-    private String qqNo;
+    private String personalProfile;
     /**
-     * 家属姓名
+     * 个人喜好
      */
-    @TableField("family_members_name")
-    private String familyMembersName;
+    private String personalPreferences;
     /**
-     * 家属手机号
+     * 招聘渠道
      */
-    @TableField("family_members_mobile")
-    private String familyMembersMobile;
+    private String recruitmentChannels;
     /**
-     * 职务
+     * 招聘渠道备注
      */
-    private String position;
+    private String channelsRemark;
+
     /**
-     * 航区
+     * 工作经历
      */
-    private String navigationArea;
+    private String workExperience;
     /**
-     * 长江驾驶高级船员航线
+     * 教育经历
      */
-    @TableField("ss_changjiang_route")
-    private String ssChangjiangRoute;
+    private String studyExperience;
+
     /**
      * 创建人
      */
@@ -175,11 +200,7 @@ public class User extends Model<User> {
      * 备注
      */
     private String remarks;
-    /**
-     * 船员分类
-     */
-    @TableField("sailor_type")
-    private String sailorType;
+
     /**
      * 扩展字段1
      */
@@ -202,11 +223,9 @@ public class User extends Model<User> {
     private String field05;
 
     @TableField(exist = false)
-    private String token;
+    private List<String> resouceList;
 
+    @TableField(exist = false)
+    private String identifyingCode;//验证码
 
-    @Override
-    protected Serializable pkVal() {
-        return this.userId;
-    }
 }

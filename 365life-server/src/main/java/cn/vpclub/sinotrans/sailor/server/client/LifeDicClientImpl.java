@@ -5,12 +5,9 @@ package cn.vpclub.sinotrans.sailor.server.client;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.demo.common.model.core.model.response.PageResponse;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.LifeDicEntity;
-import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
 import cn.vpclub.sinotrans.sailor.feign.feignClient.LifeDicClient;
-import cn.vpclub.sinotrans.sailor.feign.feignClient.UserClient;
 import cn.vpclub.sinotrans.sailor.feign.model.request.LifeDicRequest;
 import cn.vpclub.sinotrans.sailor.server.service.LifeDicServise;
-import cn.vpclub.sinotrans.sailor.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,18 +24,18 @@ public class LifeDicClientImpl implements LifeDicClient {
 
 
     @Override
-    public BaseResponse save(@RequestBody  LifeDicEntity lifeDicEntity) {
-        return lifeDicServise.save(lifeDicEntity);
+    public BaseResponse saveDic(@RequestBody  LifeDicEntity lifeDicEntity) {
+        return lifeDicServise.saveDic(lifeDicEntity);
     }
 
     @Override
-    public BaseResponse update(@RequestBody LifeDicEntity lifeDicEntity) {
-        return lifeDicServise.update(lifeDicEntity);
+    public BaseResponse updateDic(@RequestBody LifeDicEntity lifeDicEntity) {
+        return lifeDicServise.updateDic(lifeDicEntity);
     }
 
     @Override
-    public BaseResponse delete(@RequestBody LifeDicEntity lifeDicEntity) {
-        return lifeDicServise.delete(lifeDicEntity);
+    public BaseResponse deleteDic(@RequestBody LifeDicEntity lifeDicEntity) {
+        return lifeDicServise.deleteDic(lifeDicEntity);
     }
 
     @Override

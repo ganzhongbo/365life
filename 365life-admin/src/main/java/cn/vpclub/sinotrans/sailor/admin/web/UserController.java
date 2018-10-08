@@ -4,8 +4,10 @@ import cn.vpclub.demo.common.model.core.enums.ReturnCodeEnum;
 import cn.vpclub.demo.common.model.core.model.response.BackResponseUtil;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 
+import cn.vpclub.demo.common.model.core.model.response.PageResponse;
 import cn.vpclub.sinotrans.sailor.admin.service.UserService;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
+import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,6 +24,30 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /***
+     * 保存用户信息
+     */
+    @PostMapping(value = "/saveUser")
+    public BaseResponse saveUser(@RequestBody User userInfo){
+        return userService.saveUser(userInfo);
+    }
+
+    /***
+     * 保存用户信息
+     */
+    @PostMapping(value = "/updateUser")
+    public BaseResponse updateUser(@RequestBody User userInfo){
+        return userService.updateUser(userInfo);
+    }
+
+    /***
+     * 保存用户信息
+     */
+    @PostMapping(value = "/deleteUser")
+    public BaseResponse deleteUser(@RequestBody User userInfo){
+        return userService.deleteUser(userInfo);
+    }
+
     /**
      *  根据id查询数据
      * @param userInfo
@@ -29,13 +55,27 @@ public class UserController {
      */
     @PostMapping(value = "/getUserById")
     public BaseResponse getUserById(@RequestBody User userInfo){
-        BaseResponse baseResponse =null;
-        User user = userService.selectByUserId(userInfo);
-        baseResponse= BackResponseUtil.getBaseResponse(ReturnCodeEnum.CODE_1000.getCode());
-        baseResponse.setDataInfo(user);
-        return baseResponse;
+        return  userService.selectByUserId(userInfo);
     }
 
+    /***
+     * 数据字典数据分页查询
+     * @param
+     * @return
+     */
+    @PostMapping(value = "/userdatapage")
+    public PageResponse<User> userdatapage(@RequestBody UserRequest request){
+
+        return userService.userdatapage(request);
+    }
+
+    /***
+     * 登录
+     */
+    public BaseResponse login(@RequestBody User userInfo){
+
+        return  userService.login(userInfo);
+    }
 
 
 }

@@ -23,8 +23,8 @@ public interface LifeDicClient {
      * @param lifeDicEntity
      * @return
      */
-    @RequestMapping(value = "/save",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
-    BaseResponse save(@RequestBody LifeDicEntity lifeDicEntity);
+    @RequestMapping(value = "/saveDic",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    BaseResponse saveDic(@RequestBody LifeDicEntity lifeDicEntity);
 
 
     /***
@@ -32,8 +32,8 @@ public interface LifeDicClient {
      * @param lifeDicEntity
      * @return
      */
-    @RequestMapping(value = "/update",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
-    BaseResponse update(@RequestBody LifeDicEntity lifeDicEntity);
+    @RequestMapping(value = "/updateDic",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    BaseResponse updateDic(@RequestBody LifeDicEntity lifeDicEntity);
 
 
     /***
@@ -41,8 +41,8 @@ public interface LifeDicClient {
      * @param lifeDicEntity
      * @return
      */
-    @RequestMapping(value = "/delete",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
-    BaseResponse delete(@RequestBody LifeDicEntity lifeDicEntity);
+    @RequestMapping(value = "/deleteDic",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    BaseResponse deleteDic(@RequestBody LifeDicEntity lifeDicEntity);
 
 
     /**
@@ -56,7 +56,7 @@ public interface LifeDicClient {
 
     /***
      * 数据字典数据分页查询
-     * @param lifeDicEntity
+     * @param
      * @return
      */
     @RequestMapping(value = "/dicdatapage",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
