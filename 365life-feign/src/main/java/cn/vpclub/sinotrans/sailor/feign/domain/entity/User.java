@@ -177,17 +177,21 @@ public class User implements Serializable {
     private String studyExperience;
 
     /**
-     * 创建人
+     * 合伙人
      */
-    private Long createdBy;
+    private Long partner;
+    /**
+     * 上级
+     */
+    private Long superior;
     /**
      * 创建时间
      */
     private Long createdTime;
     /**
-     * 修改人
+     * 上上级
      */
-    private Long updatedBy;
+    private Long upSuperior;
     /**
      * 修改时间
      */

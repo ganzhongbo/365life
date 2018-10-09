@@ -1,7 +1,5 @@
 package cn.vpclub.sinotrans.sailor.admin.web;
 
-import cn.vpclub.demo.common.model.core.enums.ReturnCodeEnum;
-import cn.vpclub.demo.common.model.core.model.response.BackResponseUtil;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 
 import cn.vpclub.demo.common.model.core.model.response.PageResponse;
@@ -10,7 +8,6 @@ import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -59,7 +56,7 @@ public class UserController {
     }
 
     /***
-     * 数据字典数据分页查询
+     * 用户数据分页查询
      * @param
      * @return
      */
