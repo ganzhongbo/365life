@@ -21,9 +21,11 @@ public interface UserService extends IService<User> {
 
     public PageResponse<User> userdatapage( UserRequest request);
 
-    public  BaseResponse selectByUserId(User user);
+    public BaseResponse selectByUserId(User user);
 
     public BaseResponse login(User user);
+
+    public BaseResponse reSetPassword(User user);
 
 
 }

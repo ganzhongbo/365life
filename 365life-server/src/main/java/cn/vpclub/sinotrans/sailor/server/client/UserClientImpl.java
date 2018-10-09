@@ -50,11 +50,12 @@ public class UserClientImpl implements UserClient {
 
     @Override
     public BaseResponse login(@RequestBody User user) {
-
-
-
-        return null;
+        return userService.login(user);
     }
 
+    @Override
+    public BaseResponse reSetPassword(@RequestBody User user) {
+        return userService.reSetPassword(user);
+    }
 
 }

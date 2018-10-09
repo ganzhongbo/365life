@@ -31,13 +31,23 @@
 
     <!--批量删除用户关联的资源-->
     <update id="batchDelete" parameterType="cn.vpclub.sinotrans.user.feign.domain.entity.User">
-        UPDATE user_resouse set deleted = 2 where user_id = #{userId} and deleted = 1;
+        UPDATE user_resouse ur set ur.deleted = 2 where ur.resouse_id = #{userId} and ur.deleted = 1 and ur.type = 1;
     </update>
 
     <!--根据电话号码查询用户-->
     <select id="selectByTell" resultType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
         select * from user_info ui where  ui.deleted = 1 and ui.tellphone=#{tellphone}
     </select>
+
+    <!--根据用户名查询用户-->
+    <select id="selectByUserName" resultType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
+        select * from user_info ui where  ui.deleted = 1 and ui.user_name=#{userName}
+    </select>
+
+    <!--重置密码-->
+    <update id="updatePassword" parameterType="cn.vpclub.sinotrans.user.feign.domain.entity.User">
+        UPDATE user_info ui set ui.password = #{password} where ui.tellphone=#{tellphone} and ui.user_name=#{userName} and ur.deleted = 1
+    </update>
 
 
 

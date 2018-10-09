@@ -35,5 +35,7 @@ public interface UserClient {
     public  BaseResponse login(@RequestBody User user);
 
 
+    @RequestMapping(value = "/reSetPassword",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public  BaseResponse reSetPassword(@RequestBody User user);
 
 }

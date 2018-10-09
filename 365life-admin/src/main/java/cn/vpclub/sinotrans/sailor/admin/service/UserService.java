@@ -41,4 +41,8 @@ public class UserService {
     public BaseResponse login(User user){
         return userServerClient.login(user);
     }
+
+    public BaseResponse reSetPassword(User user){
+        return userServerClient.reSetPassword(user);
+    }
 }

@@ -61,9 +61,52 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             return baseResponse;
         }
 
+        if(StringUtil.isEmpty(user.getUserName())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("用户名不能为空");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }else{
+            User userEntity = baseMapper.selectByUserName(user);
+            if(userEntity!=null){
+                baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+                baseResponse.setMessage("此用户名已经注册,请重新填写");
+                log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+                return baseResponse;
+            }
+        }
+
+        if(StringUtil.isEmpty(user.getUserIdcard())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("身份证不能为空");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }
+
+        if(StringUtil.isEmpty(user.getPassword())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("密码不能为空");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }else{
+            if(!user.getPassword().equals(user.getRePassword())){
+                baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+                baseResponse.setMessage("两次输入的密码不一样");
+                log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+                return baseResponse;
+            }
+        }
+
         if(StringUtil.isEmpty(user.getTellphone())){
             baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
-            baseResponse.setMessage("未传入短信验证码，请输入验证码");
+            baseResponse.setMessage("电话号码不能为空");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }
+
+        if(StringUtil.isEmpty(user.getIdentifyingCode())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("验证码不能为空");
             log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
             return baseResponse;
         }
@@ -78,14 +121,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
                 return baseResponse;
             }
         }
-
-        if(!user.getPassword().equals(user.getRePassword())){
-            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
-            baseResponse.setMessage("两次输入的密码不一样");
-            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
-            return baseResponse;
-        }
-
         if(user.getIdentifyingCode().equals(smsCode)){
             log.info("短信验证码验证成功");
         }else{
@@ -95,7 +130,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             return baseResponse;
         }
         user.setCreatedTime(System.currentTimeMillis());
-        user.setUserRole(1);//注册默认的角色
         //生成唯一id
         String code= UUID.randomUUID().toString();
         //替换uuid中的"-"
@@ -143,7 +177,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
                     //循环插入用户资源
                     UserResouceEntity userResouceEntity = new UserResouceEntity();
                     userResouceEntity.setResouseUrl(resouceList.get(i));
-                    userResouceEntity.setUserId(user.getUserId());
+                    userResouceEntity.setResouseId(user.getUserId());
                     userResouceServise.save(userResouceEntity);
                 }
             }
@@ -314,8 +348,93 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return baseResponse;
     }
 
+    /**
+     * 重置密码
+     * @param user
+     * @return
+     */
+    @Override
+    public BaseResponse reSetPassword(User user) {
+        log.info("用户详情接口请求数据 {} :",user.toString());
+        BaseResponse baseResponse = new BaseResponse();
+        if(StringUtil.isEmpty(user.getUserName())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("账号不能为空");
+            return baseResponse;
+        }else{
+            User userEntity = baseMapper.selectByUserName(user);
+            if(userEntity==null){
+                baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+                baseResponse.setMessage("此用户名不存在");
+                return baseResponse;
+            }
+        }
+        if(StringUtil.isEmpty(user.getTellphone())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("电话号码不能为空");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }
+        if(StringUtil.isEmpty(user.getIdentifyingCode())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("验证码不能为空");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }
+        //判断电话是否唯一
+        if(!StringUtil.isEmpty(user.getTellphone())){
+            User userInfo = baseMapper.selectByTell(user);
+            if(userInfo==null){
+                baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+                baseResponse.setMessage("该电话没有注册过");
+                log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+                return baseResponse;
+            }
+        }
+        if(StringUtil.isEmpty(user.getPassword())){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("密码不能为空");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }else{
+            if(!user.getPassword().equals(user.getRePassword())){
+                baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+                baseResponse.setMessage("两次输入的密码不一样");
+                log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+                return baseResponse;
+            }
+        }
+        //校验验证码是否失效（300秒有效）
+        String redisCode = "SMS_MSG_SEND:"+"TYPE_"+3+":MOBILE_"+user.getTellphone();
+        String smsCode = redis.get(redisCode);
+        if(StringUtil.isEmpty(smsCode)){
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("短信验证码已过期，请重新发送");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }
 
-
-
-
+        if(user.getIdentifyingCode().equals(smsCode)){
+            log.info("短信验证码验证成功");
+        }else{
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            baseResponse.setMessage("短信验证码与输入验证码不一致，请重新发送");
+            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+            return baseResponse;
+        }
+        //加密密码
+        user.setPassword(Encodes.encodeToMD5(user.getPassword()));
+       boolean isRigth = baseMapper.updatePassword(user);
+       if(isRigth){
+           baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+           baseResponse.setMessage("成功");
+           log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+           return baseResponse;
+       }else{
+           baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+           baseResponse.setMessage("失败");
+           log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
+           return baseResponse;
+       }
+    }
 }

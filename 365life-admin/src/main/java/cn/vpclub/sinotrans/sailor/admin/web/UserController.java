@@ -69,10 +69,20 @@ public class UserController {
     /***
      * 登录
      */
+    @PostMapping(value = "/login")
     public BaseResponse login(@RequestBody User userInfo){
 
         return  userService.login(userInfo);
     }
 
+    /**
+     * 重置密码
+     * @param user
+     * @return
+     */
+    @PostMapping(value = "/reSetPassword")
+    public BaseResponse reSetPassword(@RequestBody User user){
 
+        return  userService.reSetPassword(user);
+    }
 }

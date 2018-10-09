@@ -1,14 +1,11 @@
 package cn.vpclub.sinotrans.sailor.feign.model.request;
 
 import cn.vpclub.demo.common.model.core.model.request.PageBaseSearchParam;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 
 @Data
 public class LifeDicRequest extends PageBaseSearchParam {
 
-    @TableId
     private Long id;
     private String dicName ;//字典名称
     private String dicValue ;//字典值

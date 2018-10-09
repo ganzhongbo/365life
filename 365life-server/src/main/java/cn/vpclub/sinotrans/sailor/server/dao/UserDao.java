@@ -18,5 +18,15 @@ public interface UserDao extends BaseMapper<User> {
     //根据电话查询用户
     public User selectByTell(User user);
 
+    //根据用户名查询用户
+    public User selectByUserName(User user);
+
+    //重置密码
+    public boolean updatePassword(User user);
+
+
+
+
+
 
 }
