@@ -30,7 +30,7 @@
     </select>
 
     <!--批量删除用户关联的资源-->
-    <update id="batchDelete" parameterType="cn.vpclub.sinotrans.user.feign.domain.entity.User">
+    <update id="batchDelete" parameterType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
         UPDATE user_resouse ur set ur.deleted = 2 where ur.resouse_id = #{userId} and ur.deleted = 1 and ur.type = 1;
     </update>
 
@@ -45,7 +45,7 @@
     </select>
 
     <!--重置密码-->
-    <update id="updatePassword" parameterType="cn.vpclub.sinotrans.user.feign.domain.entity.User">
+    <update id="updatePassword" parameterType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
         UPDATE user_info ui set ui.password = #{password} where ui.tellphone=#{tellphone} and ui.user_name=#{userName} and ur.deleted = 1
     </update>
 
