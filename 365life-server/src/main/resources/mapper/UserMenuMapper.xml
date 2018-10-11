@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.vpclub.sinotrans.sailor.server.dao.UserMenuDao">
+
+    <!-- 通用查询映射结果 -->
+   <resultMap id="BaseResultMap" type="cn.vpclub.sinotrans.sailor.feign.domain.entity.UserMenuEntity">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="request_url" property="requestUrl"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!--查询所有的菜单-->
+    <select id="selectAllUserMenu" resultMap="BaseResultMap">
+        select * from user_menu where deleted = 1
+
+        <if test="parentId!=null and parentId!=''">
+            and parent_id = #{parentId}
+        </if>
+
+    </select>
+
+    <!--根据角色查询相应的菜单-->
+    <select id="selectUserMenuByRole" resultMap="BaseResultMap">
+        select * from user_menu um
+        where deleted = 1  and um.id in (
+        select rm.menu_id from role_menu rm where  rm.user_role = #{userRole}
+        )
+        <if test="parentId!=null and parentId!=''">
+            and parent_id = #{parentId}
+        </if>
+    </select>
+
+
+
+
+</mapper>
