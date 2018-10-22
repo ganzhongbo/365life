@@ -26,11 +26,11 @@ public class UserResouceServiceImpl extends ServiceImpl<UserResouceDao, UserReso
     }
 
     @Override
-    public List<UserResouceEntity> getByUserId(String userId) {
-        log.info("根据用户主键查询关联的资源请求数据 {} :",userId.toString());
+    public List<UserResouceEntity> getByUserId(String resouseId) {
+        log.info("根据用户主键查询关联的资源请求数据 {} :",resouseId.toString());
         List<UserResouceEntity>  userResouceEntityList = new ArrayList<>();
         EntityWrapper<UserResouceEntity> ew = new EntityWrapper<>();
-        ew.eq("user_id", userId);
+        ew.eq("resouse_id", resouseId);
         userResouceEntityList = baseMapper.selectList(ew);
         return userResouceEntityList;
     }

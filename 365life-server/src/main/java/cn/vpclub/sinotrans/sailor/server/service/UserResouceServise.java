@@ -19,7 +19,7 @@ public interface UserResouceServise extends IService<UserResouceEntity> {
      * 查询详情
      * @return
      */
-    List<UserResouceEntity> getByUserId(String userId);
+    List<UserResouceEntity> getByUserId(String resouseId);
 
 
 

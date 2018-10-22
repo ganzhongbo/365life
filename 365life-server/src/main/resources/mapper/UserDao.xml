@@ -30,8 +30,8 @@
     </select>
 
     <!--批量删除用户关联的资源-->
-    <update id="batchDelete" parameterType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
-        UPDATE user_resouse ur set ur.deleted = 2 where ur.resouse_id = #{userId} and ur.deleted = 1 and ur.type = 1;
+    <update id="batchDelete" parameterType="cn.vpclub.sinotrans.sailor.feign.domain.entity.UserResouceEntity">
+        UPDATE user_resouse ur set ur.deleted = 2 where ur.resouse_id = #{resouseId} and ur.deleted = 1 and ur.type = #{type};
     </update>
 
     <!--根据电话号码查询用户-->
@@ -46,7 +46,7 @@
 
     <!--重置密码-->
     <update id="updatePassword" parameterType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
-        UPDATE user_info ui set ui.password = #{password} where ui.tellphone=#{tellphone} and ui.user_name=#{userName} and ur.deleted = 1
+        UPDATE user_info ui set ui.password = #{password} where ui.tellphone=#{tellphone} and ui.user_name=#{userName} and ui.deleted = 1
     </update>
 
     <!--绑定经济人和选择上级,查询用户-->
