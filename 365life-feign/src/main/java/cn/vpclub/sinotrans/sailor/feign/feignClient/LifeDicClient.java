@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+
 /**
  * Created by chentao on 2018/6/6.
  */
@@ -61,6 +63,32 @@ public interface LifeDicClient {
      */
     @RequestMapping(value = "/dicdatapage",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
     PageResponse<LifeDicEntity> dicdatapage(@RequestBody LifeDicRequest request);
+
+    /**
+     * 根据类型查询数据字典数据
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/selectDicByType",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<List<LifeDicEntity>> selectDicByType(@RequestBody LifeDicRequest request);
+
+
+    /**
+     * 根据户型图名称,分组(此接口只针对数据字典中的户型图)
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/selectGroupName",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<List<LifeDicEntity>> selectGroupName();
+
+    /**
+     * 根据户型图名称查询相关的户型图(此接口只针对数据字典中的户型图)
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/selectDicByName",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<List<LifeDicEntity>> selectDicByName(@RequestBody LifeDicRequest request);
+
 
 
 }

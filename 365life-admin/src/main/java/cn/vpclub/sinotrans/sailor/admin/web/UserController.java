@@ -5,6 +5,7 @@ import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.demo.common.model.core.model.response.PageResponse;
 import cn.vpclub.sinotrans.sailor.admin.service.UserService;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
+import cn.vpclub.sinotrans.sailor.feign.model.request.UserDataRequest;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,4 +86,32 @@ public class UserController {
 
         return  userService.reSetPassword(user);
     }
+
+    @PostMapping(value = "/selectUser")
+    public PageResponse<User> selectUser(@RequestBody UserRequest request){
+
+        return  userService.selectUser(request);
+    }
+
+    /***
+     * 个人数据
+     * @param userDataRequest
+     * @return
+     */
+    @PostMapping(value = "/getUserData")
+    public BaseResponse getUserData(@RequestBody UserDataRequest userDataRequest){
+        return  userService.getUserData(userDataRequest);
+    }
+
+    /***
+     * 经营报表
+     * @param userDataRequest
+     * @return
+     */
+    @PostMapping(value = "/businessReport")
+    public BaseResponse businessReport(@RequestBody UserDataRequest userDataRequest){
+        return  userService.businessReport(userDataRequest);
+    }
+
+
 }

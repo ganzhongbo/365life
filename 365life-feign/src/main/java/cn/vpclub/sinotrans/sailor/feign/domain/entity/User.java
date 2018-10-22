@@ -192,6 +192,15 @@ public class User implements Serializable {
      * 上上级
      */
     private Long upSuperior;
+
+    /**
+     * 绑定经纪人id(针对信息录入员)
+     */
+    private Long agentId;
+    /**
+     * 绑定经纪人姓名(针对信息录入员)
+     */
+    private String agentName;
     /**
      * 修改时间
      */

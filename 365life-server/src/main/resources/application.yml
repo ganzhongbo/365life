@@ -43,12 +43,12 @@ mybatis-plus:
     #序列接口实现类配置
     #key-generator: cn.jeefast.xxx
     #逻辑删除配置
-    logic-delete-value: 0
+    logic-delete-value: 2
     logic-not-delete-value: 1
     #自定义填充策略接口实现
     #meta-object-handler: cn.vpclub.demo.config.MyMetaObjectHandler
     #自定义SQL注入器
-    #sql-injector: cn.jeefast.xxx
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false

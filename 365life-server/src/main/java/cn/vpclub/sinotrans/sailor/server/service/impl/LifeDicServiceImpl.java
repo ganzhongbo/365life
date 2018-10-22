@@ -156,4 +156,70 @@ public class LifeDicServiceImpl extends ServiceImpl<LifeDicDao, LifeDicEntity> i
         return pageResponse;
 
     }
+
+    /**
+     * 根据类型查询数据字典数据
+     * @param request
+     * @return
+     */
+    @Override
+    public BaseResponse<List<LifeDicEntity>> selectDicByType(LifeDicRequest request) {
+        log.info(" 分页查询数据字典的数据请求参数：" + JSONObject.toJSONString(request));
+        BaseResponse baseResponse = new BaseResponse();
+        Map paramMap=new HashMap();
+        paramMap.put("dicType",request.getDicType());//类型
+        paramMap.put("dicName",request.getDicName());//名称
+        paramMap.put("dicCode",request.getDicCode());//编号
+        paramMap.put("dicStatus",request.getDicStatus());//状态
+        List<LifeDicEntity> lifeDicEntityList = baseMapper.selectDicByType(paramMap);
+        if(lifeDicEntityList!=null&&lifeDicEntityList.size()>0){
+            baseResponse.setDataInfo(lifeDicEntityList);
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+            baseResponse.setMessage("成功");
+        }else{
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            baseResponse.setMessage("暂无数据");
+        }
+        return baseResponse;
+    }
+
+    /**
+     * 根据户型图名称,分组(此接口只针对数据字典中的户型图)
+     * @param
+     * @return
+     */
+    @Override
+    public BaseResponse<List<LifeDicEntity>> selectGroupName() {
+        BaseResponse baseResponse = new BaseResponse();
+        List<LifeDicEntity> lifeDicEntityList = baseMapper.selectDicGroupName();
+        if(lifeDicEntityList!=null&&lifeDicEntityList.size()>0){
+            baseResponse.setDataInfo(lifeDicEntityList);
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+            baseResponse.setMessage("成功");
+        }else{
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            baseResponse.setMessage("暂无数据");
+        }
+        return baseResponse;
+    }
+    /**
+     * 根据户型图名称查询相关的户型图(此接口只针对数据字典中的户型图)
+     * @param request
+     * @return
+     */
+    @Override
+    public BaseResponse<List<LifeDicEntity>> selectDicByName(LifeDicRequest request) {
+        log.info(" 分页查询数据字典的数据请求参数：" + JSONObject.toJSONString(request));
+        BaseResponse baseResponse = new BaseResponse();
+        List<LifeDicEntity> lifeDicEntityList = baseMapper.selectDicByName(request);
+        if(lifeDicEntityList!=null&&lifeDicEntityList.size()>0){
+            baseResponse.setDataInfo(lifeDicEntityList);
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+            baseResponse.setMessage("成功");
+        }else{
+            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            baseResponse.setMessage("暂无数据");
+        }
+        return baseResponse;
+    }
 }

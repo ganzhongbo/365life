@@ -6,6 +6,8 @@ import cn.vpclub.sinotrans.sailor.feign.domain.entity.LifeDicEntity;
 import cn.vpclub.sinotrans.sailor.feign.model.request.LifeDicRequest;
 import com.baomidou.mybatisplus.service.IService;
 
+import java.util.List;
+
 public interface LifeDicServise extends IService<LifeDicEntity> {
 
     /***
@@ -47,5 +49,9 @@ public interface LifeDicServise extends IService<LifeDicEntity> {
      */
     PageResponse<LifeDicEntity> dicdatapage(LifeDicRequest request);
 
+    public BaseResponse<List<LifeDicEntity>> selectDicByType(LifeDicRequest request);
 
+    public BaseResponse<List<LifeDicEntity>> selectGroupName();
+
+    public BaseResponse<List<LifeDicEntity>> selectDicByName(LifeDicRequest request) ;
 }

@@ -16,7 +16,7 @@
     <select id="selectAllUserMenu" resultMap="BaseResultMap">
         select * from user_menu where deleted = 1
 
-        <if test="parentId!=null and parentId!=''">
+        <if test="parentId!=null">
             and parent_id = #{parentId}
         </if>
 

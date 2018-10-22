@@ -45,4 +45,7 @@ public class UserRequest extends PageBaseSearchParam{
 
     private List<Long> idList;
 
+    private  Integer type;//绑定经济人和选择上级的type去分
+
+
 }

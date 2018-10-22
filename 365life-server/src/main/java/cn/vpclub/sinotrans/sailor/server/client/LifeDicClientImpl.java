@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * Created by chentao on 2018/6/6.
  */
@@ -46,5 +48,20 @@ public class LifeDicClientImpl implements LifeDicClient {
     @Override
     public PageResponse<LifeDicEntity> dicdatapage(@RequestBody LifeDicRequest request) {
         return lifeDicServise.dicdatapage(request);
+    }
+
+    @Override
+    public BaseResponse<List<LifeDicEntity>> selectDicByType(@RequestBody LifeDicRequest request) {
+        return lifeDicServise.selectDicByType(request);
+    }
+
+    @Override
+    public BaseResponse<List<LifeDicEntity>> selectGroupName() {
+        return lifeDicServise.selectGroupName();
+    }
+
+    @Override
+    public BaseResponse<List<LifeDicEntity>> selectDicByName(@RequestBody LifeDicRequest request) {
+        return lifeDicServise.selectDicByName(request);
     }
 }

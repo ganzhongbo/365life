@@ -4,6 +4,7 @@ package cn.vpclub.sinotrans.sailor.feign.feignClient;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.demo.common.model.core.model.response.PageResponse;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
+import cn.vpclub.sinotrans.sailor.feign.model.request.UserDataRequest;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,5 +38,24 @@ public interface UserClient {
 
     @RequestMapping(value = "/reSetPassword",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
     public  BaseResponse reSetPassword(@RequestBody User user);
+
+    @RequestMapping(value = "/selectUser",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public PageResponse<User> selectUser(@RequestBody UserRequest request);
+
+    /**
+     * 个人数据
+     * @param userDataRequest
+     * @return
+     */
+    @RequestMapping(value = "/getUserData",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse getUserData(@RequestBody UserDataRequest userDataRequest);
+
+    /**
+     * 经营报表
+     * @param userDataRequest
+     * @return
+     */
+    @RequestMapping(value = "/businessReport",  method = RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse businessReport(@RequestBody UserDataRequest userDataRequest);
 
 }

@@ -3,6 +3,7 @@ package cn.vpclub.sinotrans.sailor.server.service;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.demo.common.model.core.model.response.PageResponse;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
+import cn.vpclub.sinotrans.sailor.feign.model.request.UserDataRequest;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import com.baomidou.mybatisplus.service.IService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,12 @@ public interface UserService extends IService<User> {
     public BaseResponse login(User user);
 
     public BaseResponse reSetPassword(User user);
+
+    public PageResponse<User> selectUser(UserRequest request);
+
+    public BaseResponse getUserData( UserDataRequest userDataRequest);
+
+    public BaseResponse businessReport(UserDataRequest userDataRequest);
 
 
 }

@@ -10,6 +10,9 @@ import cn.vpclub.sinotrans.sailor.feign.model.request.LifeDicRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 /**
  * Created by chentao on 2018/6/6.
@@ -65,11 +68,35 @@ public class LifeDicService {
 
     /***
      * 数据字典数据分页查询
-     * @param lifeDicEntity
+     * @param
      * @return
      */
     public  PageResponse<LifeDicEntity> dicdatapage(LifeDicRequest request){
         return lifeDicServerClient.dicdatapage(request);
     }
+
+
+    public BaseResponse<List<LifeDicEntity>> selectDicByType(LifeDicRequest request){
+        return lifeDicServerClient.selectDicByType(request);
+    }
+    /**
+     * 根据户型图名称,分组(此接口只针对数据字典中的户型图)
+     * @param
+     * @return
+     */
+    public BaseResponse<List<LifeDicEntity>> selectGroupName(){
+        return lifeDicServerClient.selectGroupName();
+    }
+
+    /**
+     * 根据户型图名称查询相关的户型图(此接口只针对数据字典中的户型图)
+     * @param request
+     * @return
+     */
+    public BaseResponse<List<LifeDicEntity>> selectDicByName( LifeDicRequest request){
+        return lifeDicServerClient.selectDicByName(request);
+
+    }
+
 
 }

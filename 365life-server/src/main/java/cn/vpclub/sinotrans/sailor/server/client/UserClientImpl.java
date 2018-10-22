@@ -6,6 +6,7 @@ import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.demo.common.model.core.model.response.PageResponse;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
 import cn.vpclub.sinotrans.sailor.feign.feignClient.UserClient;
+import cn.vpclub.sinotrans.sailor.feign.model.request.UserDataRequest;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import cn.vpclub.sinotrans.sailor.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,4 +58,20 @@ public class UserClientImpl implements UserClient {
         return userService.reSetPassword(user);
     }
 
+
+    public PageResponse<User> selectUser(@RequestBody UserRequest request) {
+        return userService.selectUser(request );
+    }
+
+    @Override
+    public BaseResponse getUserData(@RequestBody UserDataRequest userDataRequest){
+
+        return userService.getUserData(userDataRequest );
+
+    }
+
+    @Override
+    public BaseResponse businessReport(@RequestBody UserDataRequest userDataRequest){
+        return userService.businessReport(userDataRequest );
+    }
 }

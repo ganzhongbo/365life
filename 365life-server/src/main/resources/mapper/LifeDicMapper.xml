@@ -44,4 +44,35 @@
         </if>
     </select>
 
+    <select id="selectDicByType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from life_dic ld where  ld.deleted = 1
+        <if test="paramsMap.dicName !=null and paramsMap.dicName !='' ">
+            and ld.dic_name like "%"#{paramsMap.dicName}"%"
+        </if>
+        <if test="paramsMap.dicType !=null and paramsMap.dicType !=''">
+            and  ld.dic_type = #{paramsMap.dicType}
+        </if>
+        <if test="paramsMap.dicCode !=null and paramsMap.dicCode !=''">
+            and  ld.dic_code = #{paramsMap.dicCode}
+        </if>
+        <if test="paramsMap.dicStatus !=null and paramsMap.dicStatus !=''">
+            and  ld.dic_status = #{paramsMap.dicStatus}
+        </if>
+    </select>
+
+
+    <select id="selectDicGroupName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from life_dic ld where  ld.deleted = 1 and ld.dic_type = 3 GROUP by ld.dic_name
+    </select>
+
+    <select id="selectDicByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from life_dic ld where  ld.deleted = 1 and ld.dic_type = 3 and ld.dic_name = #{dicName}
+    </select>
+
 </mapper>

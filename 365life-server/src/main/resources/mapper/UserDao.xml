@@ -49,6 +49,116 @@
         UPDATE user_info ui set ui.password = #{password} where ui.tellphone=#{tellphone} and ui.user_name=#{userName} and ur.deleted = 1
     </update>
 
+    <!--绑定经济人和选择上级,查询用户-->
+    <select id="selectUser" resultType="cn.vpclub.sinotrans.sailor.feign.domain.entity.User">
+        select user_id , user_role ,user_name ,real_name , user_code from user_info ui where  ui.deleted = 1
+       and ui.user_role in (1,2,3)
+    </select>
+
+    <!--获取的租房或者卖房的客源数量-->
+    <select id="getRentingOrTenantCount" resultType="java.lang.Integer">
+        select count(1) from passenger_source hs where  hs.deleted = 1
+
+        and hs.business_type = #{selectType}
+
+        <if test="userRole==4">
+            and hs.created_by =#{userId}
+        </if>
+        <if test="userRole==1 or userRole==2 or userRole==3">
+            and hs.user_id =#{userId}
+        </if>
+        <if test="stratTime!=null ">
+            and hs.created_time &gt;= #{stratTime}
+        </if>
+        <if test="endTime!=null ">
+            and hs.created_time &lt;= #{endTime}
+        </if>
+    </select>
+
+    <!--获取的租房或者卖房的房源数量-->
+    <select id="getRentingOrTenantHouseCount" resultType="java.lang.Integer">
+        select count(1) from house_source hs where  hs.deleted = 1
+
+        and hs.business_type = #{selectType}
+
+        <if test="userRole==4">
+            and hs.created_by =#{userId}
+        </if>
+        <if test="userRole==1 or userRole==2 or userRole==3">
+            and hs.user_id =#{userId}
+        </if>
+        <if test="stratTime!=null and stratTime!=''">
+            and hs.created_by &gt;= #{stratTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and hs.created_by &lt;= #{endTime}
+        </if>
+    </select>
+
+
+    <!--获取录入房源数量-->
+    <select id="getAddHoseCount" resultType="java.lang.Integer">
+        select count(1) as addHoseCount from house_source hs where hs.deleted = 1
+        and hs.created_by =  #{userId}
+        <if test="stratTime!=null and stratTime!=''">
+            and hs.created_by &gt;= #{stratTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and hs.created_by &lt;= #{endTime}
+        </if>
+    </select>
+
+    <!--获取实勘房源数量-->
+    <select id="getRealExplorationCount" resultType="java.lang.Integer">
+        select  count(1) as realExplorationCount from source_detail sd where sd.deleted=1
+        and sd.created_by=  #{userId}
+        <if test="stratTime!=null and stratTime!=''">
+            and hs.created_by &gt;= #{stratTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and hs.created_by &lt;= #{endTime}
+        </if>
+    </select>
+
+
+    <!--获取带看房源数量-->
+    <select id="getTakeLookCount" resultType="java.lang.Integer">
+        select COUNT(1) as takeLookCount  FROM bring_record br where br.deleted=1
+        and  br.bring_id =  #{userId}
+        <if test="stratTime!=null and stratTime!=''">
+            and hs.created_by &gt;= #{stratTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and hs.created_by &lt;= #{endTime}
+        </if>
+    </select>
+
+
+    <!--获取录入的客源数量-->
+    <select id="getAddGuestsCount" resultType="java.lang.Integer">
+        select COUNT(1) as addGuestsCount  FROM passenger_source ps where ps.deleted=1
+        and  ps.created_by =  #{userId}
+        <if test="stratTime!=null and stratTime!=''">
+            and hs.created_by &gt;= #{stratTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and hs.created_by &lt;= #{endTime}
+        </if>
+    </select>
+
+    <!--获取获取客源数量-->
+    <select id="getReceiveGuestsCount" resultType="java.lang.Integer">
+        select COUNT(1) as receiveGuestsCount  FROM passenger_source ps where ps.deleted=1
+        and  ps.user_id =  #{userId}
+        <if test="stratTime!=null and stratTime!=''">
+            and hs.created_by &gt;= #{stratTime}
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            and hs.created_by &lt;= #{endTime}
+        </if>
+    </select>
+
+
 
 
 

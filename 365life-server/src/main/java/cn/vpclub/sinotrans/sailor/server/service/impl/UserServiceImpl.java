@@ -8,15 +8,18 @@ import cn.vpclub.demo.common.model.utils.common.JsonUtil;
 import cn.vpclub.demo.common.model.utils.common.StringUtil;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.UserResouceEntity;
+import cn.vpclub.sinotrans.sailor.feign.model.request.UserDataRequest;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import cn.vpclub.sinotrans.sailor.server.dao.UserDao;
 import cn.vpclub.sinotrans.sailor.server.service.UserResouceServise;
 import cn.vpclub.sinotrans.sailor.server.service.UserService;
+import cn.vpclub.sinotrans.sailor.server.utils.TestDate;
 import cn.vpclub.wuhan.redis.utils.RedisUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -153,7 +156,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     public BaseResponse updateUser(User user) {
         log.info("用户修改接口请求数据 {} :",user.toString());
         BaseResponse baseResponse = new BaseResponse();
-
         if(null == user){
             baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
             baseResponse.setMessage("入参实体为空");
@@ -182,6 +184,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
                 }
             }
             baseResponse.setDataInfo(user);
+            //将用户的信息加入到缓存中
+            String redisUserCode = "userInfo:user"+user.getUserId();
+            //先删除
+            redis.delete(redisUserCode);
+            //redis存储用户信息(永久有效)
+            redis.set(redisUserCode,user,-1);
             baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
             baseResponse.setMessage("成功");
         }else{
@@ -321,6 +329,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
                 return baseResponse;
             }else{
                 baseResponse.setDataInfo(userInfo);
+                //将用户的信息加入到缓存中
+                String redisCode = "userInfo:user"+userInfo.getUserId();
+                //先删除
+                redis.delete(redisCode);
+                //redis存储用户信息(永久有效)
+                redis.set(redisCode,userInfo,-1);
+
                 baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
                 baseResponse.setMessage("成功");
             }
@@ -334,6 +349,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             if(userInfo!=null){
                 if(user.getIdentifyingCode().equals(smsCode)){
                     baseResponse.setDataInfo(userInfo);
+                    //将用户的信息加入到缓存中
+                    String redisUserCode = "userInfo:user"+userInfo.getUserId();
+                    //先删除
+                    redis.delete(redisUserCode);
+                    //redis存储用户信息(永久有效)
+                    redis.set(redisUserCode,userInfo,-1);
                     baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
                     baseResponse.setMessage("成功");
                 }else{
@@ -426,6 +447,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         user.setPassword(Encodes.encodeToMD5(user.getPassword()));
        boolean isRigth = baseMapper.updatePassword(user);
        if(isRigth){
+
+           //将用户的信息加入到缓存中
+           String redisUserCode = "userInfo:user"+user.getUserId();
+           //先删除
+           redis.delete(redisUserCode);
+           //redis存储用户信息(永久有效)
+           redis.set(redisUserCode,user,-1);
+
            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
            baseResponse.setMessage("成功");
            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));
@@ -437,4 +466,235 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
            return baseResponse;
        }
     }
+
+    /***
+     * 绑定经济人和选择上级,查询用户
+     * @param
+     * @return
+     */
+    @Override
+    public PageResponse<User> selectUser(UserRequest request) {
+        PageResponse pageResponse = new PageResponse();
+        Page<User> page = new Page<User>();
+        page.setCurrent(request.getPageNumber() == null ? 1 : request.getPageNumber());
+        page.setSize(request.getPageSize() == null ? 10: request.getPageSize());
+
+        EntityWrapper ew=new EntityWrapper();
+        ew.like(StringUtils.isNotEmpty(request.getRealName()),"real_name",request.getRealName());
+        Object role[] = {1,2,3};
+        ew.in("user_role",role);
+        List<User> userList = baseMapper.selectPage(page,ew);
+        if(userList.size()>0){
+            Integer total = baseMapper.selectCount(ew);
+            pageResponse.setRecords(userList);
+            pageResponse.setTotal(total);
+            pageResponse.setSize(request.getPageSize());
+            pageResponse.setCurrent(request.getPageNumber());
+            pageResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+            pageResponse.setMessage(ReturnCodeEnum.CODE_1000.getValue());
+
+            log.info("用户分页查询数据出参:{}", JsonUtil.objectToJson(pageResponse));
+
+        }else{
+            pageResponse.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            pageResponse.setMessage("暂无数据");
+        }
+        return pageResponse;
+    }
+
+    /**
+     * 个人数据
+     * @param userDataRequest
+     * @return
+     */
+    @Override
+    public BaseResponse getUserData( UserDataRequest userDataRequest){
+        log.info("用户详情接口请求数据 {} :",userDataRequest.toString());
+        BaseResponse baseResponse = new BaseResponse();
+        //客源数据
+        if(userDataRequest.getType()==1){//今天
+            //租房
+            userDataRequest.setSelectType(1);
+            Date startTime = TestDate.getTimesmorning();
+            Date endTime = TestDate.getTimesnight();
+            userDataRequest.setStratTime(startTime.getTime());
+            userDataRequest.setEndTime(endTime.getTime());
+            //今天的获取的租客数
+           Integer rentingCount =  baseMapper.getRentingOrTenantCount(userDataRequest);
+           //今天获取的出租的房源数
+           Integer rentingHoseCount =  baseMapper.getRentingOrTenantHouseCount(userDataRequest);
+
+            //出售
+            userDataRequest.setSelectType(2);
+            //今天的获取卖房的客户数
+            Integer tenantCount =  baseMapper.getRentingOrTenantCount(userDataRequest);
+            //今天获取出售的房源数
+            Integer tenantHoseCount =  baseMapper.getRentingOrTenantHouseCount(userDataRequest);
+
+            //组装当天的客源数据
+            userDataRequest.setRentingerSource(rentingCount);//当天获取出租的客源
+            userDataRequest.setBuyerSource(tenantCount);//当天获取出售的客源
+            userDataRequest.setGuestSourceTotal(rentingCount+tenantCount);
+
+            //组装当天的房源数据
+            userDataRequest.setRentingItem(rentingHoseCount);//当天获取出租的房源
+            userDataRequest.setSellHoseItem(tenantHoseCount);//当天获取出售的房源
+            userDataRequest.setHouseTotal(rentingHoseCount+tenantHoseCount);
+
+
+        }else if(userDataRequest.getType()==2){//本周
+            //租房
+            userDataRequest.setSelectType(1);
+            Date startTime = TestDate.getTimesWeekmorning();//本周第一天0点
+            Date endTime = new Date();//当前时间
+            userDataRequest.setStratTime(startTime.getTime());
+            userDataRequest.setEndTime(endTime.getTime());
+            //今天的获取的租客数
+            Integer rentingCount =  baseMapper.getRentingOrTenantCount(userDataRequest);
+            //今天获取的出租的房源数
+            Integer rentingHoseCount =  baseMapper.getRentingOrTenantHouseCount(userDataRequest);
+
+            //出售
+            userDataRequest.setSelectType(2);
+            //今天的获取卖房的客户数
+            Integer tenantCount =  baseMapper.getRentingOrTenantCount(userDataRequest);
+            //今天获取出售的房源数
+            Integer tenantHoseCount =  baseMapper.getRentingOrTenantHouseCount(userDataRequest);
+
+            //组装当天的客源数据
+            userDataRequest.setRentingerSource(rentingCount);//当天获取出租的客源
+            userDataRequest.setBuyerSource(tenantCount);//当天获取出售的客源
+            userDataRequest.setGuestSourceTotal(rentingCount+tenantCount);
+
+            //组装当天的房源数据
+            userDataRequest.setRentingItem(rentingHoseCount);//当天获取出租的房源
+            userDataRequest.setSellHoseItem(tenantHoseCount);//当天获取出售的房源
+            userDataRequest.setHouseTotal(rentingHoseCount+tenantHoseCount);
+
+
+        }else{//本月
+
+            //租房
+            userDataRequest.setSelectType(1);
+            Date startTime = TestDate.getTimesMonthmorning();//本月第一天0点
+            Date endTime = new Date();//当前时间
+            userDataRequest.setStratTime(startTime.getTime());
+            userDataRequest.setEndTime(endTime.getTime());
+            //今天的获取的租客数
+            Integer rentingCount =  baseMapper.getRentingOrTenantCount(userDataRequest);
+            //今天获取的出租的房源数
+            Integer rentingHoseCount =  baseMapper.getRentingOrTenantHouseCount(userDataRequest);
+
+            //出售
+            userDataRequest.setSelectType(2);
+            //今天的获取卖房的客户数
+            Integer tenantCount =  baseMapper.getRentingOrTenantCount(userDataRequest);
+            //今天获取出售的房源数
+            Integer tenantHoseCount =  baseMapper.getRentingOrTenantHouseCount(userDataRequest);
+
+            //组装当天的客源数据
+            userDataRequest.setRentingerSource(rentingCount);//当天获取出租的客源
+            userDataRequest.setBuyerSource(tenantCount);//当天获取出售的客源
+            userDataRequest.setGuestSourceTotal(rentingCount+tenantCount);
+
+            //组装当天的房源数据
+            userDataRequest.setRentingItem(rentingHoseCount);//当天获取出租的房源
+            userDataRequest.setSellHoseItem(tenantHoseCount);//当天获取出售的房源
+            userDataRequest.setHouseTotal(rentingHoseCount+tenantHoseCount);
+
+
+        }
+        baseResponse.setDataInfo(userDataRequest);
+        baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+        baseResponse.setMessage("成功");
+        return baseResponse;
+    }
+
+    /**
+     * 经营报表
+     * @param userDataRequest
+     * @return
+     */
+    @Override
+    public BaseResponse businessReport(UserDataRequest userDataRequest) {
+        log.info("用户详情接口请求数据 {} :",userDataRequest.toString());
+        BaseResponse baseResponse = new BaseResponse();
+        if(userDataRequest.getType()==1){//今天
+
+            Date startTime = TestDate.getTimesmorning();
+            Date endTime = TestDate.getTimesnight();
+            userDataRequest.setStratTime(startTime.getTime());
+            userDataRequest.setEndTime(endTime.getTime());
+            //当天录入的房源(信息员)
+            Integer addHoseCount =  baseMapper.getAddHoseCount(userDataRequest);
+            //当天实勘的次数(经纪人)
+            Integer realExplorationCount =  baseMapper.getRealExplorationCount(userDataRequest);
+            //当天带看的次数(经纪人)
+            Integer takeLookCount =  baseMapper.getTakeLookCount(userDataRequest);
+            //当天录入的客源数量(信息员)
+            Integer addGuestsCount =  baseMapper.getAddGuestsCount(userDataRequest);
+            //当天获取的客源数量(经纪人)
+            Integer receiveGuestsCount = baseMapper.getReceiveGuestsCount(userDataRequest);
+
+            userDataRequest.setAddHoseCount(addHoseCount);//当天录入的房源
+            userDataRequest.setRealExplorationCount(realExplorationCount);//当天实勘的次数
+            userDataRequest.setTakeLookCount(takeLookCount);//当天带看的次数
+            userDataRequest.setAddGuestsCount(addGuestsCount);//当天录入的客源数量
+            userDataRequest.setReceiveGuestsCount(receiveGuestsCount);//当天获取的客源数量
+
+
+        }else if(userDataRequest.getType()==2){//本周
+
+            Date startTime = TestDate.getTimesWeekmorning();//本周第一天0点
+            Date endTime = new Date();//当前时间
+            userDataRequest.setStratTime(startTime.getTime());
+            userDataRequest.setEndTime(endTime.getTime());
+            //本周录入的房源(信息员)
+            Integer addHoseCount =  baseMapper.getAddHoseCount(userDataRequest);
+            //本周实勘的次数(经纪人)
+            Integer realExplorationCount =  baseMapper.getRealExplorationCount(userDataRequest);
+            //本周带看的次数(经纪人)
+            Integer takeLookCount =  baseMapper.getTakeLookCount(userDataRequest);
+            //本周录入的客源数量(信息员)
+            Integer addGuestsCount =  baseMapper.getAddGuestsCount(userDataRequest);
+            //本周获取的客源数量(经纪人)
+            Integer receiveGuestsCount = baseMapper.getReceiveGuestsCount(userDataRequest);
+
+            userDataRequest.setAddHoseCount(addHoseCount);//本周录入的房源
+            userDataRequest.setRealExplorationCount(realExplorationCount);//本周实勘的次数
+            userDataRequest.setTakeLookCount(takeLookCount);//本周带看的次数
+            userDataRequest.setAddGuestsCount(addGuestsCount);//本周录入的客源数量
+            userDataRequest.setReceiveGuestsCount(receiveGuestsCount);//本周获取的客源数量
+
+        }else{//本月
+
+            Date startTime = TestDate.getTimesMonthmorning();//本月第一天0点
+            Date endTime = new Date();//当前时间
+            userDataRequest.setStratTime(startTime.getTime());
+            userDataRequest.setEndTime(endTime.getTime());
+            //本月录入的房源(信息员)
+            Integer addHoseCount =  baseMapper.getAddHoseCount(userDataRequest);
+            //本月实勘的次数(经纪人)
+            Integer realExplorationCount =  baseMapper.getRealExplorationCount(userDataRequest);
+            //本月带看的次数(经纪人)
+            Integer takeLookCount =  baseMapper.getTakeLookCount(userDataRequest);
+            //本月录入的客源数量(信息员)
+            Integer addGuestsCount =  baseMapper.getAddGuestsCount(userDataRequest);
+            //本月获取的客源数量(经纪人)
+            Integer receiveGuestsCount = baseMapper.getReceiveGuestsCount(userDataRequest);
+
+            userDataRequest.setAddHoseCount(addHoseCount);//本月录入的房源
+            userDataRequest.setRealExplorationCount(realExplorationCount);//本月实勘的次数
+            userDataRequest.setTakeLookCount(takeLookCount);//本月带看的次数
+            userDataRequest.setAddGuestsCount(addGuestsCount);//本月录入的客源数量
+            userDataRequest.setReceiveGuestsCount(receiveGuestsCount);//本月获取的客源数量
+        }
+        baseResponse.setDataInfo(userDataRequest);
+        baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+        baseResponse.setMessage("成功");
+        return baseResponse;
+
+    }
+
+
 }
