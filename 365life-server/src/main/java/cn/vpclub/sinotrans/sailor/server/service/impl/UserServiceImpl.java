@@ -601,7 +601,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             userDataRequest.setRentingItem(rentingHoseCount);//当天获取出租的房源
             userDataRequest.setSellHoseItem(tenantHoseCount);//当天获取出售的房源
             userDataRequest.setHouseTotal(rentingHoseCount+tenantHoseCount);
-
+///////
 
         }
         baseResponse.setDataInfo(userDataRequest);
