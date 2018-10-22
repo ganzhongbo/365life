@@ -3,6 +3,7 @@ package cn.vpclub.sinotrans.sailor.server.dao;
 
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.User;
+import cn.vpclub.sinotrans.sailor.feign.domain.entity.UserResouceEntity;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserDataRequest;
 import cn.vpclub.sinotrans.sailor.feign.model.request.UserRequest;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -13,7 +14,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 public interface UserDao extends BaseMapper<User> {
 
     //批量删除用户关联的资源
-    public boolean batchDelete(User user);
+    public boolean batchDelete(UserResouceEntity userResouceEntity);
 
     //根据账号密码查询用户
     public User selectByUser(User user);

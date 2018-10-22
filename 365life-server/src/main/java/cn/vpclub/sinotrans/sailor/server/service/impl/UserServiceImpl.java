@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.omg.CORBA.BAD_CONTEXT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -45,6 +46,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     private RedisUtils redis;
 
     @Override
+    @Transactional
     public BaseResponse saveUser(User user) {
         log.info("用户保存接口请求数据 {} :",user.toString());
         BaseResponse baseResponse = new BaseResponse();
@@ -153,6 +155,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     }
 
     @Override
+    @Transactional
     public BaseResponse updateUser(User user) {
         log.info("用户修改接口请求数据 {} :",user.toString());
         BaseResponse baseResponse = new BaseResponse();
@@ -165,7 +168,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         boolean isright =  this.updateById(user);
         if(isright){
             //首先删除之前的关联的资源
-            boolean istrue = baseMapper.batchDelete(user);
+            UserResouceEntity userResouceEntityDo = new UserResouceEntity();
+            userResouceEntityDo.setResouseId(user.getUserId());
+            userResouceEntityDo.setType(1);
+            boolean istrue = baseMapper.batchDelete(userResouceEntityDo);
             if(!istrue){
                 baseResponse.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
                 baseResponse.setMessage("删除关联的资源抛异常");
@@ -180,6 +186,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
                     UserResouceEntity userResouceEntity = new UserResouceEntity();
                     userResouceEntity.setResouseUrl(resouceList.get(i));
                     userResouceEntity.setResouseId(user.getUserId());
+                    userResouceEntity.setType(1);
                     userResouceServise.save(userResouceEntity);
                 }
             }
@@ -215,7 +222,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             userEntity.setDeleted(2);
           boolean isRight =   this.updateById(userEntity);
             if(isRight){
-                boolean istrue = baseMapper.batchDelete(user);
+                UserResouceEntity userResouceEntity = new UserResouceEntity();
+                userResouceEntity.setResouseId(user.getUserId());
+                userResouceEntity.setType(1);
+                boolean istrue = baseMapper.batchDelete(userResouceEntity);
                 if(!istrue){
                     baseResponse.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
                     baseResponse.setMessage("删除关联的资源抛异常");
@@ -246,15 +256,17 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         EntityWrapper ew=new EntityWrapper();
         ew.like(StringUtils.isNotEmpty(request.getRealName()),"real_name",request.getRealName());
         ew.eq(StringUtils.isNotEmpty(request.getUserCode()),"user_code",request.getUserCode());
-        ew.eq(request.getPostLevel()!=0,"post_level",request.getPostLevel());
+        if(request.getPostLevel()!=null){
+            ew.eq("post_level",request.getPostLevel());
+        }
 
         List<User> userList = baseMapper.selectPage(page,ew);
         if(userList.size()>0){
             Integer total = baseMapper.selectCount(ew);
             pageResponse.setRecords(userList);
             pageResponse.setTotal(total);
-            pageResponse.setSize(request.getPageSize());
-            pageResponse.setCurrent(request.getPageNumber());
+            pageResponse.setSize(page.getSize());
+            pageResponse.setCurrent(page.getCurrent());
             pageResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
             pageResponse.setMessage(ReturnCodeEnum.CODE_1000.getValue());
 
@@ -426,7 +438,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             }
         }
         //校验验证码是否失效（300秒有效）
-        String redisCode = "SMS_MSG_SEND:"+"TYPE_"+3+":MOBILE_"+user.getTellphone();
+        String redisCode = "SMS_MSG_SEND:"+"TYPE_"+1+":MOBILE_"+user.getTellphone();
         String smsCode = redis.get(redisCode);
         if(StringUtil.isEmpty(smsCode)){
             baseResponse.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
@@ -455,6 +467,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
            //redis存储用户信息(永久有效)
            redis.set(redisUserCode,user,-1);
 
+           baseResponse.setDataInfo(user);
            baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
            baseResponse.setMessage("成功");
            log.info("user register baseResponse : {}",JsonUtil.objectToJson(baseResponse));

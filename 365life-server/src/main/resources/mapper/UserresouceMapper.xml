@@ -26,7 +26,7 @@
     </resultMap>-->
 
     <select id="selectAll" resultType="java.lang.String">
-        select ur.resouse_url from user_resouse ur where  ur.deleted = 1 and ur.type=#{type}
+        select ur.resouse_url from user_resouse ur where  ur.deleted = 1 and ur.type=#{type} and ur.resouse_id=#{resouseId}
     </select>
 
 
