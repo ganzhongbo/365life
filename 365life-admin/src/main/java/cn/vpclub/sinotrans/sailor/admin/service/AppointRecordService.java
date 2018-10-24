@@ -61,7 +61,7 @@ public class AppointRecordService extends BaseServicce {
         //预约人id
         appointRecord.setAppointId(userId);
         //预约人工号
-        appointRecord.setAppointCode(map.get("userCode").toString());
+        appointRecord.setAppointCode(null == map.get("userCode") ? "0" : map.get("userCode").toString());
         //预约人姓名
         appointRecord.setAppointName(realName);
         //创建人

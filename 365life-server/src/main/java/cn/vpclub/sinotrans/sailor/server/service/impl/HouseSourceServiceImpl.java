@@ -5,6 +5,7 @@ import cn.vpclub.demo.common.model.core.enums.ReturnCodeEnum;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.sinotrans.sailor.feign.domain.constants.FollowRecordConstant;
 import cn.vpclub.sinotrans.sailor.feign.domain.constants.HouseSourceConstants;
+import cn.vpclub.sinotrans.sailor.feign.domain.constants.MsgCenterConstant;
 import cn.vpclub.sinotrans.sailor.feign.domain.constants.UserResourceConstants;
 import cn.vpclub.sinotrans.sailor.feign.domain.dto.HouseSourceDTO;
 import cn.vpclub.sinotrans.sailor.feign.domain.dto.SourceDetailDTO;
@@ -19,6 +20,7 @@ import cn.vpclub.sinotrans.sailor.server.service.*;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +37,7 @@ import java.util.List;
  * @author 南政
  * @since 2018-10-15
  */
+@Slf4j
 @Service
 public class HouseSourceServiceImpl extends ServiceImpl<HouseSourceDao, HouseSource> implements HouseSourceService {
 
@@ -55,6 +59,9 @@ public class HouseSourceServiceImpl extends ServiceImpl<HouseSourceDao, HouseSou
     @Resource
     private TradeRecordService tradeRecordService;
 
+    @Resource
+    private MsgCenterService msgCenterService;
+
 
     /**
      * 房源信息-分页列表
@@ -69,7 +76,7 @@ public class HouseSourceServiceImpl extends ServiceImpl<HouseSourceDao, HouseSou
         //时间倒序
         wrapper.orderBy("created_time", false);
         //搜索条件-商圈
-        wrapper.eq(null == param.getTradeAreaId(), "trade_area_id", param.getTradeAreaId());
+        wrapper.eq(null != param.getTradeAreaId(), "trade_area_id", param.getTradeAreaId());
         //搜索条件-户型
         wrapper.eq(StringUtils.isNotBlank(param.getModelName()), "model_name", param.getModelName());
         //搜索条件-类型
@@ -84,7 +91,7 @@ public class HouseSourceServiceImpl extends ServiceImpl<HouseSourceDao, HouseSou
             }
         }
         //是否租售（根据状态）
-        wrapper.eq(null == param.getHouseStatus(), "house_status", param.getHouseStatus());
+        wrapper.eq(null != param.getHouseStatus(), "house_status", HouseSourceConstants.HAVE_TRADE);
 
         Page<HouseSource> page = new Page<>();
 
@@ -129,30 +136,31 @@ public class HouseSourceServiceImpl extends ServiceImpl<HouseSourceDao, HouseSou
     /**
      * 房源信息-新增修改
      *
-     * @param houseSource
+     * @param houseSourceDTO
      * @return
      */
     @Override
-    public BaseResponse<Boolean> saveOrUpdate(HouseSource houseSource) {
+    public BaseResponse<Boolean> saveOrUpdate(HouseSourceDTO houseSourceDTO) {
         BaseResponse<Boolean> response = new BaseResponse<>();
         //判断是否有相关的房源信息(根据商圈、小区名字、楼栋号、单元号和门室号判断唯一)
         EntityWrapper<HouseSource> wrapper = new EntityWrapper<>();
-        wrapper.eq("detail_address", houseSource.getDetailAddress());
-        wrapper.eq("community_name", houseSource.getCommunityName());
-        wrapper.eq("building_number", houseSource.getBuildingNumber());
-        wrapper.eq("unit_number", houseSource.getUnitNumber());
-        wrapper.eq("room_number", houseSource.getRoomNumber());
+        wrapper.eq("detail_address", houseSourceDTO.getDetailAddress());
+        wrapper.eq("community_name", houseSourceDTO.getCommunityName());
+        wrapper.eq("building_number", houseSourceDTO.getBuildingNumber());
+        wrapper.eq("unit_number", houseSourceDTO.getUnitNumber());
+        wrapper.eq("room_number", houseSourceDTO.getRoomNumber());
         HouseSource entity = selectOne(wrapper);
+        boolean isInsert = null == houseSourceDTO.getId();
         if (null != entity) {
             //如果id为空则为新增，那么就重复了
-            if (null == houseSource.getId()) {
+            if (null == houseSourceDTO.getId()) {
                 response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
                 response.setMessage("新增失败，存在相同的房源");
                 return response;
             }
             //根据id查找是否有实勘信息，如果有那么基本信息不能修改
             EntityWrapper<SourceDetail> wrapper1 = new EntityWrapper<>();
-            wrapper1.eq("source_id", houseSource.getId());
+            wrapper1.eq("source_id", houseSourceDTO.getId());
             SourceDetail sourceDetail = sourceDetailService.selectOne(wrapper1);
             if (null != sourceDetail) {
                 response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
@@ -161,18 +169,49 @@ public class HouseSourceServiceImpl extends ServiceImpl<HouseSourceDao, HouseSou
             }
 
             //id不为空但是与查出来的对象的id不同，那么就重复了
-            if (houseSource.getId().compareTo(entity.getId()) != 0) {
+            if (houseSourceDTO.getId().compareTo(entity.getId()) != 0) {
                 response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
                 response.setMessage("修改失败，存在相同的房源");
                 return response;
             }
         }
+        HouseSource houseSource = new HouseSource();
+        //属性拷贝
+        BeanUtils.copyProperties(houseSourceDTO, houseSource);
+        //执行保存
         boolean success = insertOrUpdate(houseSource);
         response.setDataInfo(success);
         if (!success) {
             response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
             response.setMessage("操作失败");
             return response;
+        }
+        //如果是新增，发送消息
+        if (isInsert) {
+            MsgCenter msgCenter = new MsgCenter();
+            //房源类型消息
+            msgCenter.setMsgType(MsgCenterConstant.HOUSE_SOURCE);
+            //消息所属
+            msgCenter.setMsgBelong(MsgCenterConstant.PRIVATE_MESSAGE);
+            //消息接受者id
+            msgCenter.setReceiverId(houseSource.getUserId());
+            //消息发送者id
+            msgCenter.setSendId(houseSource.getCreatedBy());
+            //消息发送者name
+            msgCenter.setSendName(houseSource.getCreatedName());
+            //消息发送者头像
+            msgCenter.setSendImage(houseSourceDTO.getHeadImg());
+            //业务id
+            msgCenter.setBusinessId(houseSource.getId());
+            //商圈id
+            msgCenter.setTradeAreaId(houseSource.getTradeAreaId());
+            //商圈name
+            msgCenter.setTradeAreaName(houseSource.getTradeAreaName());
+            //执行保存
+            BaseResponse<Boolean> baseResponse = msgCenterService.save(msgCenter);
+            if (baseResponse.getReturnCode().intValue() != ReturnCodeEnum.CODE_1000.getCode().intValue()) {
+                log.info("--------------------发送消息失败，{}--------------------", baseResponse.getMessage());
+            }
         }
         response.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
         response.setMessage("操作成功");
@@ -262,6 +301,104 @@ public class HouseSourceServiceImpl extends ServiceImpl<HouseSourceDao, HouseSou
         response.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
         response.setMessage("请求成功");
         response.setDataInfo(houseSourceDTO);
+        return response;
+    }
+
+    /**
+     * 房源信息-房源抢单
+     *
+     * @param param
+     * @return
+     */
+    @Override
+    public BaseResponse<Boolean> grabSource(HouseSourceRequest param) {
+        BaseResponse<Boolean> response = new BaseResponse<>();
+        //先查询是否存在房源
+        HouseSource entity = selectById(param.getId());
+        if (null == entity) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("房源信息不存在");
+            return response;
+        }
+        if ((null != entity.getUserId() || StringUtils.isNotBlank(entity.getUserName())) && entity.getUserId().compareTo(param.getUserId()) != 0) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("房源信息已有经纪人");
+            return response;
+        }
+        //如果不抢单
+        if (param.getIsGrab() == 1) {
+            entity.setUserId(param.getUserId());
+            entity.setUserName(param.getUserName());
+        } else {
+            entity.setUserId(null);
+            entity.setUserName(null);
+        }
+        //全字段更新
+        boolean success = updateAllColumnById(entity);
+        if (!success) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("更新房源信息失败");
+            return response;
+        }
+        //再去更新消息状态
+        MsgCenter msgCenter = new MsgCenter();
+        msgCenter.setUpdatedBy(param.getUserId());
+        msgCenter.setUpdatedTime(new Date().getTime());
+        msgCenter.setMsgStatus(MsgCenterConstant.HAVE_DEAL);
+        //如果不为空，则直接根据id更新
+        if (null != param.getMsgId()) {
+            msgCenter.setId(param.getMsgId());
+        } else {
+            //如果为空，则先查询
+            EntityWrapper<MsgCenter> wrapper = new EntityWrapper<>();
+            wrapper.eq("business_id", entity.getId());
+            wrapper.eq("msg_belong", MsgCenterConstant.PUBLIC_MESSAGE);
+            MsgCenter msgCenter1 = msgCenterService.selectOne(wrapper);
+            if (null != msgCenter1) {
+                msgCenter.setId(msgCenter1.getId());
+            }
+        }
+        if (null != msgCenter.getId()) {
+            success = msgCenterService.updateById(msgCenter);
+            response.setDataInfo(success);
+            if (!success) {
+                response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+                response.setMessage("更新消息状态失败");
+                return response;
+            }
+        }
+        //更新完消息后判断是否是放弃本房源，如果是，那么就要发送消息
+        if (param.getIsGrab() == MsgCenterConstant.NOT_GRAB) {
+            MsgCenter msgCenter1 = msgCenterService.selectById(param.getMsgId());
+            MsgCenter msgCenter2 = new MsgCenter();
+            //房源类型消息
+            msgCenter2.setMsgType(MsgCenterConstant.HOUSE_SOURCE);
+            //消息所属
+            msgCenter2.setMsgBelong(MsgCenterConstant.PUBLIC_MESSAGE);
+            //消息发送者id
+            msgCenter2.setSendId(msgCenter1.getSendId());
+            //消息发送者name
+            msgCenter2.setSendName(msgCenter1.getSendName());
+            //消息发送者头像
+            msgCenter2.setSendImage(msgCenter1.getSendImage());
+            //业务id
+            msgCenter2.setBusinessId(msgCenter1.getBusinessId());
+            //商圈id
+            msgCenter2.setTradeAreaId(msgCenter1.getTradeAreaId());
+            //商圈name
+            msgCenter2.setTradeAreaName(msgCenter1.getTradeAreaName());
+            //执行保存
+            BaseResponse<Boolean> baseResponse = msgCenterService.save(msgCenter2);
+            response.setDataInfo(baseResponse.getDataInfo());
+            if (baseResponse.getReturnCode().intValue() != ReturnCodeEnum.CODE_1000.getCode().intValue()) {
+                log.info("--------------------发送消息失败，{}--------------------", baseResponse.getMessage());
+                response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+                response.setMessage("发送消息失败");
+                return response;
+            }
+        }
+        response.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+        response.setMessage("操作成功");
         return response;
     }
 }

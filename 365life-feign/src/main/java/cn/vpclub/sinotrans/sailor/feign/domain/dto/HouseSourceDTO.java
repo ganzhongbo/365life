@@ -39,4 +39,9 @@ public class HouseSourceDTO extends HouseSource {
      */
     private TradeRecordDTO tradeRecordDTO;
 
+    /**
+     * 用户头像
+     */
+    private String headImg;
+
 }

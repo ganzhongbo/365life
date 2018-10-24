@@ -13,9 +13,28 @@ import lombok.Data;
 public class HouseSourceRequest extends PageBaseSearchParam {
 
     /**
+     * 主键id
+     */
+    private Long id;
+
+    /**
      * 所属经纪人id，可以为空
      */
     private Long userId;
+
+    /**
+     * 所属经纪人姓名，可以为空
+     */
+    private String userName;
+
+    /**
+     * 消息id
+     */
+    private Long msgId;
+    /**
+     * 是否抢单，1、抢单，2、不抢单
+     */
+    private Integer isGrab;
 
     /**
      * 商圈id

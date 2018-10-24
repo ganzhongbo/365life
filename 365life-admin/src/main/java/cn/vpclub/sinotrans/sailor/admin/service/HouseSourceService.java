@@ -10,6 +10,7 @@ import cn.vpclub.sinotrans.sailor.feign.domain.entity.HouseSource;
 import cn.vpclub.sinotrans.sailor.feign.model.request.HouseSourceRequest;
 import com.baomidou.mybatisplus.plugins.Page;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,10 +43,10 @@ public class HouseSourceService extends BaseServicce {
     /**
      * 房源信息-新增修改
      *
-     * @param houseSource
+     * @param houseSourceDTO
      * @return
      */
-    public BaseResponse<Boolean> saveOrUpdate(HouseSource houseSource) {
+    public BaseResponse<Boolean> saveOrUpdate(HouseSourceDTO houseSourceDTO) {
         BaseResponse<Boolean> response = new BaseResponse<>();
         //从缓存中获取用户信息
         Map<String, Object> map = JsonUtil.jsonToMap(getUser());
@@ -56,15 +57,17 @@ public class HouseSourceService extends BaseServicce {
         }
         //当前时间戳
         long current = new Date().getTime();
-        if (null == houseSource.getId()) {
-            houseSource.setCreatedBy(Long.valueOf(map.get("userId").toString()));
-            houseSource.setUserId(Long.valueOf(map.get("superior").toString()));
-            houseSource.setCreatedName(map.get("realName").toString());
-            houseSource.setCreatedTime(current);
+        if (null == houseSourceDTO.getId()) {
+            houseSourceDTO.setUserName(null == map.get("agentName") ? null : map.get("agentName").toString());
+            houseSourceDTO.setCreatedBy(Long.valueOf(map.get("userId").toString()));
+            houseSourceDTO.setUserId(null == map.get("agentId") ? null : Long.valueOf(map.get("agentId").toString()));
+            houseSourceDTO.setCreatedName(map.get("realName").toString());
+            houseSourceDTO.setCreatedTime(current);
+            houseSourceDTO.setHeadImg(null == map.get("headImg") ? "无" : map.get("headImg").toString());
         }
-        houseSource.setUpdatedBy(Long.valueOf(map.get("userId").toString()));
-        houseSource.setUpdatedTime(current);
-        return houseSourceServerClient.saveOrUpdate(houseSource);
+        houseSourceDTO.setUpdatedBy(Long.valueOf(map.get("userId").toString()));
+        houseSourceDTO.setUpdatedTime(current);
+        return houseSourceServerClient.saveOrUpdate(houseSourceDTO);
     }
 
     /**
@@ -75,5 +78,25 @@ public class HouseSourceService extends BaseServicce {
      */
     public BaseResponse<HouseSourceDTO> getDetail(HouseSource houseSource) {
         return houseSourceServerClient.getDetail(houseSource);
+    }
+
+    /**
+     * 房源信息-房源抢单
+     *
+     * @param param
+     * @return
+     */
+    public BaseResponse<Boolean> grabSource(HouseSourceRequest param) {
+        BaseResponse<Boolean> response = new BaseResponse<>();
+        //从缓存中获取用户信息
+        Map<String, Object> map = JsonUtil.jsonToMap(getUser());
+        if (MapUtils.isEmpty(map)) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("获取登陆用户信息失败");
+            return response;
+        }
+        param.setUserId(Long.valueOf(map.get("userId").toString()));
+        param.setUserName(map.get("realName").toString());
+        return houseSourceServerClient.grabSource(param);
     }
 }

@@ -20,6 +20,7 @@ public interface HouseSourceClient {
 
     /**
      * 房源信息-分页列表
+     *
      * @param param
      * @return
      */
@@ -28,17 +29,28 @@ public interface HouseSourceClient {
 
     /**
      * 房源信息-新增修改
-     * @param houseSource
+     *
+     * @param houseSourceDTO
      * @return
      */
     @RequestMapping(value = "/saveOrUpdate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    BaseResponse<Boolean> saveOrUpdate(HouseSource houseSource);
+    BaseResponse<Boolean> saveOrUpdate(HouseSourceDTO houseSourceDTO);
 
     /**
      * 房源信息-获取详情
+     *
      * @param houseSource
      * @return
      */
     @RequestMapping(value = "/getDetail", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     BaseResponse<HouseSourceDTO> getDetail(HouseSource houseSource);
+
+    /**
+     * 房源信息-房源抢单
+     *
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/grabSource", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    BaseResponse<Boolean> grabSource(HouseSourceRequest param);
 }

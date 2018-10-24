@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
  * @since 2018-10-17
  */
 @Data
-@TableName(value = "trade_name")
+@TableName(value = "trade_record")
 public class TradeRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;

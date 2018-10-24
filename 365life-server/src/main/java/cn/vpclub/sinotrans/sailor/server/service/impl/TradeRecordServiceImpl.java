@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -58,14 +59,17 @@ public class TradeRecordServiceImpl extends ServiceImpl<TradeRecordDao, TradeRec
         EntityWrapper<TradeRecord> wrapper = new EntityWrapper<>();
         wrapper.eq("source_id", tradeRecord.getSourceId());
         TradeRecord entity = selectOne(wrapper);
-        //如果不为空那么去查询相关的合同资料
-        List<UserResouceEntity> list = new ArrayList<>();
-        if (null != entity) {
-            EntityWrapper<UserResouceEntity> wrapper1 = new EntityWrapper<>();
-            wrapper1.eq("resouse_id", entity.getId());
-            wrapper1.eq("type", UserResourceConstants.CONTRACT_DOCUMENT);
-            list = userResourceService.selectList(wrapper1);
+        if (null == entity) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+            response.setMessage("请求成功，但无数据");
+            response.setDataInfo(new TradeRecordDTO());
+            return response;
         }
+        //如果不为空那么去查询相关的合同资料
+        EntityWrapper<UserResouceEntity> wrapper1 = new EntityWrapper<>();
+        wrapper1.eq("resouse_id", entity.getId());
+        wrapper1.eq("type", UserResourceConstants.CONTRACT_DOCUMENT);
+        List<UserResouceEntity> list = userResourceService.selectList(wrapper1);
         TradeRecordDTO tradeRecordDTO = new TradeRecordDTO();
         BeanUtils.copyProperties(entity, tradeRecordDTO);
         tradeRecordDTO.setFiles(list);
@@ -131,10 +135,23 @@ public class TradeRecordServiceImpl extends ServiceImpl<TradeRecordDao, TradeRec
             file.setType(UserResourceConstants.CONTRACT_DOCUMENT);
         }
         success = userResourceService.insertBatch(files);
-        response.setDataInfo(success);
         if (!success) {
             response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
             response.setMessage("保存合同文件出错");
+            return response;
+        }
+        //在去修改房源的状态为已成交
+        HouseSource entity = new HouseSource();
+        entity.setId(tradeRecordDTO.getSourceId());
+        entity.setHouseStatus(HouseSourceConstants.HAVE_TRADE);
+        entity.setUpdatedBy(tradeRecordDTO.getUpdatedBy());
+        entity.setUpdatedTime(new Date().getTime());
+        //执行修改
+        success = houseSourceService.updateById(entity);
+        response.setDataInfo(success);
+        if (!success) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("修改房源状态失败");
             return response;
         }
         response.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());

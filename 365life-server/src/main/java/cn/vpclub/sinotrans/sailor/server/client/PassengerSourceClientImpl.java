@@ -26,6 +26,7 @@ public class PassengerSourceClientImpl implements PassengerSourceClient {
 
     /**
      * 客源信息-分页列表
+     *
      * @param param
      * @return
      */
@@ -36,6 +37,7 @@ public class PassengerSourceClientImpl implements PassengerSourceClient {
 
     /**
      * 客源信息-新增修改
+     *
      * @param entity
      * @return
      */
@@ -53,5 +55,16 @@ public class PassengerSourceClientImpl implements PassengerSourceClient {
     @Override
     public BaseResponse<PassengerSourceDTO> getDetail(@RequestBody PassengerSource entity) {
         return passengerSourceService.getDetail(entity);
+    }
+
+    /**
+     * 客源信息-删除客源
+     *
+     * @param passengerSource
+     * @return
+     */
+    @Override
+    public BaseResponse<Boolean> remove(@RequestBody PassengerSource passengerSource) {
+        return passengerSourceService.remove(passengerSource);
     }
 }

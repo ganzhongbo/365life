@@ -39,4 +39,12 @@ public interface PassengerSourceService extends IService<PassengerSource> {
      * @return
      */
     BaseResponse<PassengerSourceDTO> getDetail(PassengerSource entity);
+
+    /**
+     * 客源信息-删除客源
+     *
+     * @param passengerSource
+     * @return
+     */
+    BaseResponse<Boolean> remove(PassengerSource passengerSource);
 }

@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 房源实勘详细信息表 服务实现类
@@ -58,6 +57,27 @@ public class SourceDetailServiceImpl extends ServiceImpl<SourceDetailDao, Source
             response.setMessage("房源基本信息不存在");
             return response;
         }
+        if (null == houseSource.getUserId()) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("公共房源，请先抢单");
+            return response;
+        }
+        if (houseSource.getUserId().compareTo(sourceDetailDTO.getUpdatedBy()) != 0) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("非本人房源，无法操作实勘信息");
+            return response;
+        }
+        //如果新增，那么判断是否有实勘信息
+        if (null == sourceDetailDTO.getId()) {
+            EntityWrapper<SourceDetail> wrapper = new EntityWrapper<>();
+            wrapper.eq("source_id", sourceDetailDTO.getSourceId());
+            SourceDetail sourceDetail = selectOne(wrapper);
+            if (null != sourceDetail) {
+                response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+                response.setMessage("此房源已存在实勘信息");
+                return response;
+            }
+        }
         SourceDetail sourceDetail = new SourceDetail();
         //对象拷贝
         BeanUtils.copyProperties(sourceDetailDTO, sourceDetail);
@@ -86,13 +106,11 @@ public class SourceDetailServiceImpl extends ServiceImpl<SourceDetailDao, Source
         }
         //循环赋值
         for (UserResouceEntity houseImg : houseImages) {
-            houseImg.setId(IdWorker.getId());
             houseImg.setResouseId(sourceDetail.getId());
             houseImg.setType(UserResourceConstants.HOUSE_IMAGE);
         }
         //循环赋值
         for (UserResouceEntity propertyDelivery : propertyDeliveries) {
-            propertyDelivery.setId(IdWorker.getId());
             propertyDelivery.setResouseId(sourceDetail.getId());
             propertyDelivery.setType(UserResourceConstants.PROPERTY_DELIVERY);
         }

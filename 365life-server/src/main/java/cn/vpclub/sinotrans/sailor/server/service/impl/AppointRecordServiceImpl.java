@@ -88,8 +88,8 @@ public class AppointRecordServiceImpl extends ServiceImpl<AppointRecordDao, Appo
         }
         //再判断是否有此客户的带看信息
         EntityWrapper<BringRecord> wrapper = new EntityWrapper<>();
-        //按时间倒序
-        wrapper.orderBy("created_time", false);
+        //按预约时间之前
+        wrapper.lt("created_time", appointRecord.getAppointTime());
         //搜索房源id
         wrapper.eq("source_id", appointRecord.getSourceId());
         //搜索同一个客户手机号

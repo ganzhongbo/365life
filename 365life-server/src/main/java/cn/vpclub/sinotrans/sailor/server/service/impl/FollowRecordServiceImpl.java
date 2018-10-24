@@ -2,11 +2,15 @@ package cn.vpclub.sinotrans.sailor.server.service.impl;
 
 import cn.vpclub.demo.common.model.core.enums.ReturnCodeEnum;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
+import cn.vpclub.sinotrans.sailor.feign.domain.constants.FollowRecordConstant;
 import cn.vpclub.sinotrans.sailor.feign.domain.entity.FollowRecord;
+import cn.vpclub.sinotrans.sailor.feign.domain.entity.HouseSource;
+import cn.vpclub.sinotrans.sailor.feign.domain.entity.PassengerSource;
 import cn.vpclub.sinotrans.sailor.feign.model.request.FollowRecordRequest;
 import cn.vpclub.sinotrans.sailor.server.dao.FollowRecordDao;
 import cn.vpclub.sinotrans.sailor.server.service.FollowRecordService;
 import cn.vpclub.sinotrans.sailor.server.service.HouseSourceService;
+import cn.vpclub.sinotrans.sailor.server.service.PassengerSourceService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,9 @@ public class FollowRecordServiceImpl extends ServiceImpl<FollowRecordDao, Follow
 
     @Resource
     private HouseSourceService houseSourceService;
+
+    @Resource
+    private PassengerSourceService passengerSourceService;
 
     /**
      * 跟进记录-分页列表
@@ -61,6 +68,21 @@ public class FollowRecordServiceImpl extends ServiceImpl<FollowRecordDao, Follow
     @Override
     public BaseResponse<Boolean> saveOrUpdate(FollowRecord followRecord) {
         BaseResponse<Boolean> response = new BaseResponse<>();
+        if (followRecord.getFollowType() == FollowRecordConstant.HOUSE_SOURCE) {
+            HouseSource houseSource = houseSourceService.selectById(followRecord.getSourceId());
+            if (null == houseSource) {
+                response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+                response.setMessage("跟进房源信息不存在");
+                return response;
+            }
+        } else {
+            PassengerSource passengerSource = passengerSourceService.selectById(followRecord.getSourceId());
+            if (null == passengerSource) {
+                response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+                response.setMessage("跟进客源信息不存在");
+                return response;
+            }
+        }
         //执行保存
         boolean success = insertOrUpdate(followRecord);
         response.setDataInfo(success);
