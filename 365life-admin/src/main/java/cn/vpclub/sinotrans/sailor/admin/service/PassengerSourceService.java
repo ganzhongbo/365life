@@ -61,7 +61,8 @@ public class PassengerSourceService extends BaseServicce {
         long userId = Long.valueOf(map.get("userId").toString());
         if (null == entity.getId()) {
             entity.setCreatedBy(userId);
-            entity.setUserId(Long.valueOf(map.get("superior").toString()));
+            entity.setUserName(null == map.get("agentName") ? "无" : map.get("agentName").toString());
+            entity.setUserId(null == map.get("agentId") ? 0 : Long.valueOf(map.get("agentId").toString()));
             entity.setCreatedName(map.get("realName").toString());
             entity.setCreatedTime(current);
         }
@@ -78,6 +79,25 @@ public class PassengerSourceService extends BaseServicce {
      */
     public BaseResponse<PassengerSourceDTO> getDetail(PassengerSource entity) {
         return passengerSourceServerClient.getDetail(entity);
+    }
+
+    /**
+     * 客源信息-删除客源
+     *
+     * @param passengerSource
+     * @return
+     */
+    public BaseResponse<Boolean> remove(PassengerSource passengerSource) {
+        BaseResponse<Boolean> response = new BaseResponse<>();
+        Map<String, Object> map = JsonUtil.jsonToMap(getUser());
+        if (MapUtils.isEmpty(map)) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("获取用户登录信息失败");
+            return response;
+        }
+        passengerSource.setUpdatedBy(Long.valueOf(map.get("userId").toString()));
+        passengerSource.setUpdatedTime(new Date().getTime());
+        return passengerSourceServerClient.remove(passengerSource);
     }
 
     /**
@@ -98,4 +118,5 @@ public class PassengerSourceService extends BaseServicce {
 
         return null;
     }
+
 }

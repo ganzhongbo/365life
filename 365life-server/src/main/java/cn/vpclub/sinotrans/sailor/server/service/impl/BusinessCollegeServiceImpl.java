@@ -39,8 +39,6 @@ public class BusinessCollegeServiceImpl extends ServiceImpl<BusinessCollegeDao, 
     @Resource
     private UserDao userDao;
 
-
-
     @Override
     public BaseResponse<BusinessCollegeEntity> saveBusinessCollege(BusinessCollegeEntity businessCollegeEntity) {
         log.info("保存接口请求数据 {} :",businessCollegeEntity.toString());
@@ -54,17 +52,6 @@ public class BusinessCollegeServiceImpl extends ServiceImpl<BusinessCollegeDao, 
         businessCollegeEntity.setCreatedTime(System.currentTimeMillis());
         boolean isright =  this.insert(businessCollegeEntity);
         if(isright){
-
-            //首先删除之前的关联的资源
-            UserResouceEntity userResouceEntityDo = new UserResouceEntity();
-            userResouceEntityDo.setResouseId(businessCollegeEntity.getId());
-            userResouceEntityDo.setType(2);
-            boolean istrue = userDao.batchDelete(userResouceEntityDo);
-            if(!istrue){
-                baseResponse.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
-                baseResponse.setMessage("删除关联的资源抛异常");
-                return baseResponse;
-            }
             //保存提交的最新的资源
             List<String> resouceList = businessCollegeEntity.getResouseList();
             if(resouceList!=null&&resouceList.size()>0){
@@ -77,7 +64,6 @@ public class BusinessCollegeServiceImpl extends ServiceImpl<BusinessCollegeDao, 
                     userResouceDao.insert(userResouceEntity);
                 }
             }
-
 
             baseResponse.setDataInfo(businessCollegeEntity);
             baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
@@ -112,7 +98,18 @@ public class BusinessCollegeServiceImpl extends ServiceImpl<BusinessCollegeDao, 
                 return baseResponse;
             }
 
-
+            //保存提交的最新的资源
+            List<String> resouceList = businessCollegeEntity.getResouseList();
+            if(resouceList!=null&&resouceList.size()>0){
+                for (int i=0;i<resouceList.size();i++){
+                    //循环插入文件资源
+                    UserResouceEntity userResouceEntity = new UserResouceEntity();
+                    userResouceEntity.setResouseUrl(resouceList.get(i));
+                    userResouceEntity.setResouseId(businessCollegeEntity.getId());
+                    userResouceEntity.setType(2);
+                    userResouceDao.insert(userResouceEntity);
+                }
+            }
             baseResponse.setDataInfo(businessCollegeEntity);
             baseResponse.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
             baseResponse.setMessage("成功");

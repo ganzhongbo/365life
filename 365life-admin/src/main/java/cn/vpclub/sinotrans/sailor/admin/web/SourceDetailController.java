@@ -4,6 +4,7 @@ package cn.vpclub.sinotrans.sailor.admin.web;
 import cn.vpclub.demo.common.model.core.enums.ReturnCodeEnum;
 import cn.vpclub.demo.common.model.core.model.response.BaseResponse;
 import cn.vpclub.sinotrans.sailor.admin.service.SourceDetailService;
+import cn.vpclub.sinotrans.sailor.feign.domain.constants.SourceDetailConstants;
 import cn.vpclub.sinotrans.sailor.feign.domain.dto.SourceDetailDTO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,8 +29,13 @@ public class SourceDetailController {
     @Resource
     private SourceDetailService sourceDetailService;
 
-
-    @PostMapping
+    /**
+     * 房源信息-房源实勘
+     *
+     * @param sourceDetailDTO
+     * @return
+     */
+    @PostMapping(value = "/saveOrUpdate")
     public BaseResponse<Boolean> saveOrUpdate(@RequestBody SourceDetailDTO sourceDetailDTO) {
         BaseResponse<Boolean> response = new BaseResponse<>();
         if (null == sourceDetailDTO.getSourceId()) {
@@ -40,6 +46,11 @@ public class SourceDetailController {
         if (StringUtils.isBlank(sourceDetailDTO.getOrientation())) {
             response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
             response.setMessage("入参房屋朝向orientation为空");
+            return response;
+        }
+        if (null == sourceDetailDTO.getDictId()) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            response.setMessage("入参房屋户型主键dictId为空");
             return response;
         }
         if (null == sourceDetailDTO.getInnerStructure()) {
@@ -150,6 +161,22 @@ public class SourceDetailController {
         if (null == sourceDetailDTO.getIsKey()) {
             response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
             response.setMessage("入参是否拿到钥匙为空");
+            return response;
+        }
+        //如果是已经拿到钥匙
+        if (sourceDetailDTO.getIsKey() == SourceDetailConstants.HAVE_TAKE && null == sourceDetailDTO.getTakeKeyId()) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            response.setMessage("入参拿到钥匙人的主键takeKeyId为空");
+            return response;
+        }
+        if (sourceDetailDTO.getIsKey() == SourceDetailConstants.HAVE_TAKE && StringUtils.isBlank(sourceDetailDTO.getTakeKeyName())) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            response.setMessage("入参拿钥匙人名takeKeyName为空");
+            return response;
+        }
+        if (sourceDetailDTO.getIsKey() == SourceDetailConstants.HAVE_TAKE && null == sourceDetailDTO.getTakeKeyTime()) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            response.setMessage("入参拿钥匙的时间takeKeyTime为空");
             return response;
         }
         if (CollectionUtils.isEmpty(sourceDetailDTO.getHouseImg())) {

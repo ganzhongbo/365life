@@ -159,4 +159,38 @@ public class PassengerSourceServiceImpl extends ServiceImpl<PassengerSourceDao, 
         response.setDataInfo(passengerSourceDTO);
         return response;
     }
+
+    /**
+     * 客源信息-删除客源
+     *
+     * @param passengerSource
+     * @return
+     */
+    @Override
+    public BaseResponse<Boolean> remove(PassengerSource passengerSource) {
+        BaseResponse<Boolean> response = new BaseResponse<>();
+        PassengerSource entity = selectById(passengerSource.getId());
+        if (null == entity) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("客源信息不存在");
+            return response;
+        }
+        //先更新记录更新人
+        boolean success = updateById(passengerSource);
+        if (!success) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("记录更新人失败");
+            return response;
+        }
+        success = deleteById(passengerSource);
+        response.setDataInfo(success);
+        if (!success) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1005.getCode());
+            response.setMessage("删除失败");
+            return response;
+        }
+        response.setReturnCode(ReturnCodeEnum.CODE_1000.getCode());
+        response.setMessage("删除成功");
+        return response;
+    }
 }

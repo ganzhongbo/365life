@@ -25,15 +25,25 @@ public interface HouseSourceService extends IService<HouseSource> {
 
     /**
      * 房源信息-新增修改
-     * @param houseSource
+     *
+     * @param houseSourceDTO
      * @return
      */
-    BaseResponse<Boolean> saveOrUpdate(HouseSource houseSource);
+    BaseResponse<Boolean> saveOrUpdate(HouseSourceDTO houseSourceDTO);
 
     /**
      * 房源信息-获取详情
+     *
      * @param houseSource
      * @return
      */
     BaseResponse<HouseSourceDTO> getDetail(HouseSource houseSource);
+
+    /**
+     * 房源信息-房源抢单
+     *
+     * @param param
+     * @return
+     */
+    BaseResponse<Boolean> grabSource(HouseSourceRequest param);
 }

@@ -61,6 +61,16 @@ public class FollowRecordController {
     @PostMapping(value = "/saveOrUpdate")
     public BaseResponse<Boolean> saveOrUpdate(@RequestBody FollowRecord followRecord) {
         BaseResponse<Boolean> response = new BaseResponse<>();
+        if (null == followRecord.getSourceId()) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            response.setMessage("入参房源/客源主键sourceId为空");
+            return response;
+        }
+        if (null == followRecord.getFollowType()) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            response.setMessage("入参跟进类型followType为空");
+            return response;
+        }
         if (StringUtils.isBlank(followRecord.getDescription())) {
             response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
             response.setMessage("入参跟进描述description为空");

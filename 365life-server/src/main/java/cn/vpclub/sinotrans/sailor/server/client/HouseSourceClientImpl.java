@@ -38,12 +38,12 @@ public class HouseSourceClientImpl implements HouseSourceClient {
     /**
      * 房源信息-新增修改
      *
-     * @param houseSource
+     * @param houseSourceDTO
      * @return
      */
     @Override
-    public BaseResponse<Boolean> saveOrUpdate(@RequestBody HouseSource houseSource) {
-        return houseSourceService.saveOrUpdate(houseSource);
+    public BaseResponse<Boolean> saveOrUpdate(@RequestBody HouseSourceDTO houseSourceDTO) {
+        return houseSourceService.saveOrUpdate(houseSourceDTO);
     }
 
     /**
@@ -54,5 +54,16 @@ public class HouseSourceClientImpl implements HouseSourceClient {
     @Override
     public BaseResponse<HouseSourceDTO> getDetail(@RequestBody HouseSource houseSource) {
         return houseSourceService.getDetail(houseSource);
+    }
+
+    /**
+     * 房源信息-房源抢单
+     *
+     * @param param
+     * @return
+     */
+    @Override
+    public BaseResponse<Boolean> grabSource(@RequestBody HouseSourceRequest param) {
+        return houseSourceService.grabSource(param);
     }
 }

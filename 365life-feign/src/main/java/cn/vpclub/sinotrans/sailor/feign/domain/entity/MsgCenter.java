@@ -5,24 +5,18 @@ import java.io.Serializable;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.annotations.Version;
-
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotNull;
 
 /**
- * 客源信息记录表
+ * 消息中心表
  *
  * @author 南政
- * @since 2018-10-17
+ * @since 2018-10-22
  */
 @Data
-@TableName(value = "passenger_source")
-public class PassengerSource implements Serializable {
+@TableName(value = "msg_center")
+public class MsgCenter implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,49 +26,45 @@ public class PassengerSource implements Serializable {
     @TableId(type = IdType.ID_WORKER)
     private Long id;
     /**
-     * 所属经纪人id，可以为空
+     * 消息类型（1、房源类型，预留其他，可增加）
      */
-    private Long userId;
+    private Integer msgType;
     /**
-     * 所属经纪人姓名，可以为空
+     * 消息所属，默认为1（1、私有消息，2、公有消息）
      */
-    private String userName;
+    private Integer msgBelong;
     /**
-     * 客户姓名
+     * 如果消息所属为私有，那么此字段不为空
      */
-    private String passengerName;
+    private Long receiverId;
     /**
-     * 客户性别，默认为1（1、男，2、女）
+     * 发布者主键
      */
-    private Integer passengerSex;
+    private Long sendId;
     /**
-     * 客户电话
+     * 发布者姓名
      */
-    private String passengerPhone;
+    private String sendName;
     /**
-     * 需求类型，默认为1（1、租房，2、买房）
+     * 发布者头像
      */
-    private Integer requireType;
+    private String sendImage;
     /**
-     * 需求地段
+     * 业务id（房源id或者其他关联id）
      */
-    private String requireLocation;
+    private Long businessId;
     /**
-     * 需求户型
+     * 商圈主键
      */
-    private String requireModel;
+    private Long tradeAreaId;
     /**
-     * 需求预算（单位分）
+     * 商圈名字
      */
-    private Long requireBudget;
+    private String tradeAreaName;
     /**
-     * 偏好描述
+     * 消息状态（1、未处理，2、已处理）
      */
-    private String preferenceDesc;
-    /**
-     * 填报人姓名
-     */
-    private String createdName;
+    private Integer msgStatus;
     /**
      * 创建人id
      */

@@ -22,7 +22,6 @@ public class HouseSourceConstants {
      */
     public static final int HAVE_TRADE = 3;
 
-
     /**
      * 公盘
      */

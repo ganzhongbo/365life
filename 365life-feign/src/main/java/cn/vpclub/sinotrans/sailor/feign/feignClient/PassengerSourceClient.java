@@ -47,4 +47,13 @@ public interface PassengerSourceClient {
      */
     @RequestMapping(value = "/getDetail", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     BaseResponse<PassengerSourceDTO> getDetail(PassengerSource entity);
+
+    /**
+     * 客源信息-删除客源
+     *
+     * @param passengerSource
+     * @return
+     */
+    @RequestMapping(value = "/remove", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    BaseResponse<Boolean> remove(PassengerSource passengerSource);
 }

@@ -116,6 +116,23 @@ public class PassengerSourceController {
         return passengerSourceService.getDetail(entity);
     }
 
+    /**
+     * 客源信息-删除客源
+     *
+     * @param passengerSource
+     * @return
+     */
+    @PostMapping(value = "remove")
+    public BaseResponse<Boolean> remove(@RequestBody PassengerSource passengerSource) {
+        BaseResponse<Boolean> response = new BaseResponse<>();
+        if (null == passengerSource.getId()) {
+            response.setReturnCode(ReturnCodeEnum.CODE_1006.getCode());
+            response.setMessage("入参id为空");
+            return response;
+        }
+        return passengerSourceService.remove(passengerSource);
+    }
+
 
     /**
      * 个人中心-我的客源

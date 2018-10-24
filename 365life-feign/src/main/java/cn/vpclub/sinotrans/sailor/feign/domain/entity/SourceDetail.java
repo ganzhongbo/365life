@@ -2,10 +2,7 @@ package cn.vpclub.sinotrans.sailor.feign.domain.entity;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableLogic;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.annotations.*;
 
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
@@ -147,6 +144,18 @@ public class SourceDetail implements Serializable {
      * 是否拿到钥匙（1、否，2、是）
      */
     private Integer isKey;
+    /**
+     * 拿到钥匙的人员的id
+     */
+    private Long takeKeyId;
+    /**
+     * 拿到钥匙的人员
+     */
+    private String takeKeyName;
+    /**
+     * 拿到钥匙的时间
+     */
+    private Long takeKeyTime;
     /**
      * 填报人姓名
      */
